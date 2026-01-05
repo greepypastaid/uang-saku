@@ -1,7 +1,21 @@
-<nav class="bg-white shadow px-6 py-4 flex justify-between">
-    <div class="font-bold text-xl">MyApp</div>
-    <ul class="flex gap-4">
-        <li><a href="/" class="hover:text-blue-500">Home</a></li>
-        <li><a href="/about" class="hover:text-blue-500">About</a></li>
-    </ul>
+<nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Uang Saku</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/transaction">Transaction</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </nav>
