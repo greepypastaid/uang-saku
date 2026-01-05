@@ -87,22 +87,22 @@
 <script>
     var baseUrl = window.location.href;
 
-    $(document).ready(function () {
-        $('#btn-tambah').click(function () {
+    $(document).ready(function() {
+        $('#btn-tambah').click(function() {
             $('#form_transaksi')[0].reset();
             $('#id_transaksi').val('');
             $('#transaksiModal').modal('show');
         });
 
-        $('#form_transaksi').submit(function (e) {
+        $('#form_transaksi').submit(function(e) {
             e.preventDefault();
             submitData();
             $('#transaksiModal').modal('hide');
             showData();
-            alert('Data berhasil disimpan! (Dummy)');
         });
 
         deleteData();
+        editData();
         showData();
     })
 
@@ -136,7 +136,7 @@
             "data": form
         };
 
-        $.ajax(settings).done(function (response) {
+        $.ajax(settings).done(function(response) {
             response = JSON.parse(response);
             console.log(response);
             if (response.status) {
@@ -152,7 +152,7 @@
             url: `${baseUrl}/list`,
             method: "GET",
             dataType: "json",
-            success: function (response) {
+            success: function(response) {
                 let tbody = '';
                 response.data.forEach(function(item, index) {
                     tbody += `
@@ -175,9 +175,56 @@
     }
 
     function deleteData() {
-
+        $(document).on("click", ".btn-delete", function() {
+            let id = $(this).data('id');
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                $.ajax({
+                    url: `${baseUrl}/delete?id=${id}`,
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status) {
+                            alert(response.message);
+                            showData();
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        });
     }
 
+    function editData() {
+        $(document).on("click", ".btn-edit", function() {
+            let id = $(this).data('id');
+            // Fetch data transaksi berdasarkan ID dan isi form
+            var settings = {
+                "url": `${baseUrl}/read?id=${id}`,
+                "method": "GET",
+                "timeout": 0,
+            };
+
+            $.ajax(settings).done(function(response) {
+                if (response.status === false) {
+                    alert(response.message);
+                    return;
+                } else {
+                    let data = response.data;
+                    $('#form_transaksi')[0].reset();
+                    $('#id_transaksi').val(data.id);
+                    $('#tanggal').val(data.tanggal);
+                    $('#nama_transaksi').val(data.nama_transaksi);
+                    $('#harga').val(data.harga);
+                    $('#kategori').val(data.kategori);
+                    $('#transaksiModal').modal('show');
+                }
+            });
+        });
+    }
 </script>
 
 
