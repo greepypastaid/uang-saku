@@ -1,0 +1,74 @@
+# ----------------------------------------------------------------------
+# Environment Management
+# ----------------------------------------------------------------------
+# .env files contain sensitive information (database credentials, keys)
+# and should strictly NEVER be committed to version control.
+.env
+.env.*
+!.env.example
+
+# ----------------------------------------------------------------------
+# Dependencies
+# ----------------------------------------------------------------------
+# Composer dependencies
+/vendor/
+
+# Node.js dependencies (if you decide to use npm/yarn later)
+/node_modules/
+npm-debug.log
+yarn-error.log
+
+# ----------------------------------------------------------------------
+# CodeIgniter 4 - Writable Directory (Cache, Logs, Uploads)
+# ----------------------------------------------------------------------
+# Ignore all dynamic content in writable, but keep the directory structure
+/writable/cache/*
+!/writable/cache/index.html
+!/writable/cache/.gitignore
+
+/writable/logs/*
+!/writable/logs/index.html
+!/writable/logs/.gitignore
+
+/writable/session/*
+!/writable/session/index.html
+!/writable/session/.gitignore
+
+/writable/uploads/*
+!/writable/uploads/index.html
+!/writable/uploads/.gitignore
+
+/writable/debugbar/*
+!/writable/debugbar/index.html
+!/writable/debugbar/.gitignore
+
+# ----------------------------------------------------------------------
+# Testing & Coverage
+# ----------------------------------------------------------------------
+/tests/coverage/
+/tests/_support/_generated/
+/builds/
+/phpunit.xml
+.phpunit.result.cache
+
+# ----------------------------------------------------------------------
+# IDE & Text Editor Settings (Keep your workspace clean)
+# ----------------------------------------------------------------------
+# JetBrains (PhpStorm)
+.idea/
+*.iml
+
+# Visual Studio Code
+.vscode/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
