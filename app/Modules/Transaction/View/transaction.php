@@ -21,6 +21,7 @@
                             <th scope="col" class="py-3">Nama Transaksi</th>
                             <th scope="col" class="py-3">Harga</th>
                             <th scope="col" class="py-3">Kategori</th>
+                            <th scope="col" class="py-3">Tipe</th>
                             <th scope="col" class="py-3 text-end">Aksi</th>
                         </tr>
                     </thead>
@@ -66,7 +67,27 @@
                                         <option value="Makanan">Makanan</option>
                                         <option value="Transportasi">Transportasi</option>
                                         <option value="Hiburan">Hiburan</option>
+                                        <option value="Pemasukkan">Pemasukkan</option>
                                         <option value="Lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Tipe Transaksi<sup class="text-danger">*</sup></label>
+                                    <select class="form-select" id="type" name="type" required>
+                                        <option value="" selected disabled>Pilih Tipe</option>
+                                        <option value="income">Income</option>
+                                        <option value="expense">Expense</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Wallet<sup
+                                            class="text-danger">*</sup></label>
+                                    <select class="form-select" id="wallet_id" name="wallet_id" required>
+                                        <option value="" selected disabled>Pilih Wallet</option>
+                                        <?php foreach ($wallets as $wallet): ?>
+                                            <option value="<?= $wallet['id'] ?>"><?= $wallet['nama'] ?>
+</option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
@@ -112,6 +133,8 @@
         let nama_transaksi = $('#nama_transaksi').val();
         let harga = $('#harga').val();
         let kategori = $('#kategori').val();
+        let type = $('#type').val();
+        let wallet_id = $('#wallet_id').val();
 
         let form = new FormData();
         form.append('id', id);
@@ -119,6 +142,8 @@
         form.append('nama_transaksi', nama_transaksi);
         form.append('harga', harga);
         form.append('kategori', kategori);
+        form.append('type', type);
+        form.append('wallet_id', wallet_id);
 
         let url = `${baseUrl}/create`;
         if (id !== '') {
@@ -162,6 +187,7 @@
                         <td class="fw-medium">${item.nama_transaksi}</td>
                         <td class="text-danger fw-bold">Rp ${item.harga}</td>
                         <td><span class="badge bg-info text-dark">${item.kategori}</span></td>
+                        <td><span class="badge bg-${item.type === 'income' ? 'success' : 'danger'} text-white">${item.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</span></td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-outline-secondary btn-edit" data-id="${item.id}">Edit</button>
                             <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${item.id}">Hapus</button>
@@ -201,7 +227,7 @@
     function editData() {
         $(document).on("click", ".btn-edit", function() {
             let id = $(this).data('id');
-            // Fetch data transaksi berdasarkan ID dan isi form
+
             var settings = {
                 "url": `${baseUrl}/read?id=${id}`,
                 "method": "GET",
@@ -220,6 +246,9 @@
                     $('#nama_transaksi').val(data.nama_transaksi);
                     $('#harga').val(data.harga);
                     $('#kategori').val(data.kategori);
+                    $('#type').val(data.type);
+                    $('#wallet_id').val(data.wallet_id);
+                    $('#wallet_id').trigger('change');
                     $('#transaksiModal').modal('show');
                 }
             });

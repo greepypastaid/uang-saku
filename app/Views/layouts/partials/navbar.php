@@ -10,7 +10,13 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/transaction">Transaction</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/wallet">Wallet</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/about">About</a>
