@@ -1,16 +1,20 @@
-<?= $this->extend('layouts/main') ?>
+<?= $this->extend('../Modules/Dashboard/View/layouts/dashboardLayouts') ?>
 
 <?= $this->section('content') ?>
 <div class="container mt-4">
     <div class="card shadow-sm border-0">
-        <div class="card-body">
+        <div class="">
+            <h1 class="fw-bold">Halaman Wallet</h1>
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="card-title fw-bold mb-0">Wallet Broh</h2>
-                <button id="btn-tambah" class="btn btn-primary px-4 rounded-pill shadow-sm">
-                    <i class="bi bi-plus-lg"></i> Tambah Wallet
+                <p class="mb-0">Tambah dan kurangi transaksi Anda dengan mudah disini!</p>
+
+                <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm"
+                    style="background-color: #FFD600; color: #000000; border: none;">
+                    <i class="bi bi-plus-lg"></i> Tambah Transaksi
                 </button>
             </div>
-
+        </div>
+        <div class="card-body">
             <!-- Tabel -->
             <div class="table-responsive">
                 <table class="table table-hover align-middle" id="tabel-transaksi">
@@ -41,8 +45,7 @@
                             <div class="modal-body">
                                 <input type="hidden" id="id" name="id" value="" />
                                 <div class="mb-3">
-                                    <label for="nama" class="form-label">Nama<sup
-                                            class="text-danger">*</sup></label>
+                                    <label for="nama" class="form-label">Nama<sup class="text-danger">*</sup></label>
                                     <input type="text" class="form-control" id="nama" name="nama"
                                         placeholder="Contoh: BCA" required />
                                 </div>
@@ -69,14 +72,14 @@
 <script>
     var baseUrl = window.location.href;
 
-    $(document).ready(function() {
-        $('#btn-tambah').click(function() {
+    $(document).ready(function () {
+        $('#btn-tambah').click(function () {
             $('#form_wallet')[0].reset();
             $('#id').val('');
             $('#walletModal').modal('show');
         });
 
-        $('#form_wallet').submit(function(e) {
+        $('#form_wallet').submit(function (e) {
             e.preventDefault();
             submitData();
         });
@@ -112,7 +115,7 @@
             "data": form
         };
 
-        $.ajax(settings).done(function(response) {
+        $.ajax(settings).done(function (response) {
             response = JSON.parse(response);
             console.log(response);
             $('#walletModal').modal('hide');
@@ -130,9 +133,9 @@
             url: `${baseUrl}/list`,
             method: "GET",
             dataType: "json",
-            success: function(response) {
+            success: function (response) {
                 let tbody = '';
-                response.data.forEach(function(item, index) {
+                response.data.forEach(function (item, index) {
                     tbody += `
                     <tr>
                         <td>${index + 1}</td>
@@ -151,7 +154,7 @@
     }
 
     function deleteData() {
-        $(document).on("click", ".btn-delete", function() {
+        $(document).on("click", ".btn-delete", function () {
             let id = $(this).data('id');
             if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
                 $.ajax({
@@ -161,7 +164,7 @@
                         id: id
                     },
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         if (response.status) {
                             alert(response.message);
                             showData();
@@ -175,7 +178,7 @@
     }
 
     function editData() {
-        $(document).on("click", ".btn-edit", function() {
+        $(document).on("click", ".btn-edit", function () {
             let id = $(this).data('id');
             // Fetch data transaksi berdasarkan ID dan isi form
             var settings = {
@@ -184,7 +187,7 @@
                 "timeout": 0,
             };
 
-            $.ajax(settings).done(function(response) {
+            $.ajax(settings).done(function (response) {
                 // Parse response jika masih string
                 if (typeof response === 'string') {
                     response = JSON.parse(response);

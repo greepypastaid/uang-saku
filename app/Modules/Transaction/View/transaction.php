@@ -1,16 +1,19 @@
-<?= $this->extend('layouts/main') ?>
+<?= $this->extend('../Modules/Dashboard/View/layouts/dashboardLayouts') ?>
 
 <?= $this->section('content') ?>
 <div class="container mt-4">
+    <div class="">
+        <h1 class="fw-bold">Halaman Transaksi</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <p class="mb-0">Tambah dan kurangi transaksi Anda dengan mudah disini!</p>
+
+            <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm" style="background-color: #FFD600; color: #000000; border: none;">
+                <i class="bi bi-plus-lg"></i> Tambah Transaksi
+            </button>
+        </div>
+    </div>
     <div class="card shadow-sm border-0">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="card-title fw-bold mb-0">Transaction Page</h2>
-                <button id="btn-tambah" class="btn btn-primary px-4 rounded-pill shadow-sm">
-                    <i class="bi bi-plus-lg"></i> Tambah Transaksi
-                </button>
-            </div>
-
             <!-- Tabel -->
             <div class="table-responsive">
                 <table class="table table-hover align-middle" id="tabel-transaksi">
@@ -72,7 +75,8 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="type" class="form-label">Tipe Transaksi<sup class="text-danger">*</sup></label>
+                                    <label for="type" class="form-label">Tipe Transaksi<sup
+                                            class="text-danger">*</sup></label>
                                     <select class="form-select" id="type" name="type" required>
                                         <option value="" selected disabled>Pilih Tipe</option>
                                         <option value="income">Income</option>
@@ -80,20 +84,19 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="type" class="form-label">Wallet<sup
-                                            class="text-danger">*</sup></label>
+                                    <label for="type" class="form-label">Wallet<sup class="text-danger">*</sup></label>
                                     <select class="form-select" id="wallet_id" name="wallet_id" required>
                                         <option value="" selected disabled>Pilih Wallet</option>
                                         <?php foreach ($wallets as $wallet): ?>
                                             <option value="<?= $wallet['id'] ?>"><?= $wallet['nama'] ?>
-</option>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
+                                <button type="button" class="btn" style="background-color: #ffffff; color: #000000; border: 1px solid #000000;" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn" style="background-color: #FFD600; color: #000000; border: none;">Simpan</button>
                             </div>
                         </div>
                     </div>
@@ -108,14 +111,14 @@
 <script>
     var baseUrl = window.location.href;
 
-    $(document).ready(function() {
-        $('#btn-tambah').click(function() {
+    $(document).ready(function () {
+        $('#btn-tambah').click(function () {
             $('#form_transaksi')[0].reset();
             $('#id_transaksi').val('');
             $('#transaksiModal').modal('show');
         });
 
-        $('#form_transaksi').submit(function(e) {
+        $('#form_transaksi').submit(function (e) {
             e.preventDefault();
             submitData();
             $('#transaksiModal').modal('hide');
@@ -161,7 +164,7 @@
             "data": form
         };
 
-        $.ajax(settings).done(function(response) {
+        $.ajax(settings).done(function (response) {
             response = JSON.parse(response);
             console.log(response);
             if (response.status) {
@@ -177,9 +180,9 @@
             url: `${baseUrl}/list`,
             method: "GET",
             dataType: "json",
-            success: function(response) {
+            success: function (response) {
                 let tbody = '';
-                response.data.forEach(function(item, index) {
+                response.data.forEach(function (item, index) {
                     tbody += `
                     <tr>
                         <td>${index + 1}</td>
@@ -201,7 +204,7 @@
     }
 
     function deleteData() {
-        $(document).on("click", ".btn-delete", function() {
+        $(document).on("click", ".btn-delete", function () {
             let id = $(this).data('id');
             if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
                 $.ajax({
@@ -211,7 +214,7 @@
                         id: id
                     },
                     dataType: 'json',
-                    success: function(response) {
+                    success: function (response) {
                         if (response.status) {
                             alert(response.message);
                             showData();
@@ -225,7 +228,7 @@
     }
 
     function editData() {
-        $(document).on("click", ".btn-edit", function() {
+        $(document).on("click", ".btn-edit", function () {
             let id = $(this).data('id');
 
             var settings = {
@@ -234,7 +237,7 @@
                 "timeout": 0,
             };
 
-            $.ajax(settings).done(function(response) {
+            $.ajax(settings).done(function (response) {
                 if (response.status === false) {
                     alert(response.message);
                     return;
