@@ -44,4 +44,14 @@ class TransactionModel extends Model
     {
         return $this->delete($id);
     }
+
+    public function getTotalExpense(): float
+    {
+    return $this->selectSum('harga')->where('type', 'expense')->get()->getRowArray()['harga'] ?? 0;
+    }
+
+    public function getTotalIncome(): float
+    {
+        return $this->selectSum('harga')->where('type', 'income')->get()->getRowArray()['harga'] ?? 0;
+    }
 }

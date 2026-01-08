@@ -40,4 +40,9 @@ class WalletModel extends Model
     {
         return $this->findAll();
     }
+
+    public function getTotalSaldo(): float
+    {
+        return (float) $this->selectSum('saldo')->get()->getRowArray()['saldo'] ?? 0;
+    }
 }
