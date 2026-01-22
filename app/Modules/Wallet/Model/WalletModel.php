@@ -9,9 +9,8 @@ class WalletModel extends Model
     protected $table = 'wallets';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $allowedFields = ['nama', 'saldo'];
+    protected $allowedFields = ['nama', 'saldo', 'created_at', 'updated_at', 'note'];
 
-    // buat ini cok bagian timestamps katanya biar otomatis
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
@@ -44,5 +43,53 @@ class WalletModel extends Model
     public function getTotalSaldo(): float
     {
         return (float) $this->selectSum('saldo')->get()->getRowArray()['saldo'] ?? 0;
+    }
+
+    public function transferFunds($fromWalletId, $toWalletId, $amount, $note = null)
+    {
+        $fromWallet = $this->find($fromWalletId);
+        $toWallet = $this->find($toWalletId);
+
+        if (!$fromWallet || !$toWallet) {
+            return false;
+        }
+
+        if ((float) $fromWallet['saldo'] < (float) $amount) {
+            return false;
+        }
+
+        $db = \Config\Database::connect();
+        $db->transBegin();
+
+        try {
+            $this->update($fromWalletId, [
+                'saldo' => (float) $fromWallet['saldo'] - (float) $amount
+            ]);
+
+            $this->update($toWalletId, [
+                'saldo' => (float) $toWallet['saldo'] + (float) $amount
+            ]);
+
+            $now = date('Y-m-d H:i:s');
+
+            $transferTable = $db->table('transfer');
+            $transferTable->insert([
+                'from_wallet_id' => $fromWalletId,
+                'to_wallet_id' => $toWalletId,
+                'amount' => $amount,
+                'note' => $note ?? 'Transfer Dana',
+                'created_at' => $now,
+            ]);
+
+            $transferId = $db->insertID();
+
+            $db->transCommit();
+            return true;
+
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', $e->getMessage());
+            return false;
+        }
     }
 }

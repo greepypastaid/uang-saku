@@ -93,4 +93,36 @@ class WalletController extends BaseController
 
         return $this->response->setJSON(['status' => true, 'message' => 'Data wallet berhasil diperbarui!']);
     }
+
+    public function transfer()
+    {
+        $data = $this->request->getPost();
+
+        $from = (int) ($data['from_wallet_id'] ?? 0);
+        $to = (int) ($data['to_wallet_id'] ?? 0);
+        $amount = (float) ($data['amount'] ?? 0);
+        $note = $data['note'] ?? 'Transfer Dana';
+
+        if ($from <= 0 || $to <= 0 || $amount <= 0) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Data transfer tidak valid.'
+            ]);
+        }
+
+        if ($from === $to) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Wallet asal dan tujuan tidak boleh sama.'
+            ]);
+        }
+
+        $status = $this->walletModel->transferFunds($from, $to, $amount, $note);
+
+        return $this->response->setJSON([
+            'status' => $status,
+            'message' => $status ? 'Transfer dana berhasil.' : 'Transfer dana gagal.'
+        ]);
+    }
+
 }

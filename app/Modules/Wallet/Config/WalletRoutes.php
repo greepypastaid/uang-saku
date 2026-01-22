@@ -7,4 +7,5 @@ $routes->group('wallet', ['namespace' => 'App\Modules\Wallet\Controller'], funct
     $routes->post('delete', 'WalletController::delete');
     $routes->get('list', 'WalletController::list');
     $routes->get('read', 'WalletController::read');
+    $routes->post('transfer', 'WalletController::transfer');
 });

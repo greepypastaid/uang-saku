@@ -45,6 +45,12 @@ class CreateTransaksiTable extends Migration
                 'unsigned'   => true,
                 'null'       => true,
             ],
+            'transfer_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
@@ -56,11 +62,14 @@ class CreateTransaksiTable extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('transaksi');
+        // safe create: IF NOT EXISTS (useful for dev)
+        $this->forge->createTable('transaksi', true);
+
+        // NOTE: adding FK is moved to a separate migration that runs after CreateTransfer
     }
 
     public function down()
     {
-        $this->forge->dropTable('transaksi');
+        $this->forge->dropTable('transaksi', true);
     }
 }
