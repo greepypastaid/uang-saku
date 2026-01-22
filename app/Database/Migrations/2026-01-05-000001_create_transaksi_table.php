@@ -34,6 +34,17 @@ class CreateTransaksiTable extends Migration
                 'constraint' => '100',
                 'null'       => false,
             ],
+            'type' => [
+                'type'       => "ENUM('income','expense')",
+                'null'       => false,
+                'default'    => 'expense',
+            ],
+            'wallet_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

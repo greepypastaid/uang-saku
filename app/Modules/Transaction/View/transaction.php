@@ -7,7 +7,8 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <p class="mb-0">Tambah dan kurangi transaksi Anda dengan mudah disini!</p>
 
-            <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm" style="background-color: #FFD600; color: #000000; border: none;">
+            <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm"
+                style="background-color: #FFD600; color: #000000; border: none;">
                 <i class="bi bi-plus-lg"></i> Tambah Transaksi
             </button>
         </div>
@@ -16,7 +17,7 @@
         <div class="card-body">
             <!-- Tabel -->
             <div class="table-responsive">
-                <table class="table table-hover align-middle" id="tabel-transaksi">
+                <table class="table table-hover align-middle" id="table-transaksi">
                     <thead class="table-light">
                         <tr>
                             <th scope="col" class="py-3">#</th>
@@ -24,7 +25,6 @@
                             <th scope="col" class="py-3">Nama Transaksi</th>
                             <th scope="col" class="py-3">Harga</th>
                             <th scope="col" class="py-3">Kategori</th>
-                            <th scope="col" class="py-3">Tipe</th>
                             <th scope="col" class="py-3 text-end">Aksi</th>
                         </tr>
                     </thead>
@@ -95,8 +95,11 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn" style="background-color: #ffffff; color: #000000; border: 1px solid #000000;" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn" style="background-color: #FFD600; color: #000000; border: none;">Simpan</button>
+                                <button type="button" class="btn"
+                                    style="background-color: #ffffff; color: #000000; border: 1px solid #000000;"
+                                    data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn"
+                                    style="background-color: #FFD600; color: #000000; border: none;">Simpan</button>
                             </div>
                         </div>
                     </div>
@@ -169,6 +172,7 @@
             console.log(response);
             if (response.status) {
                 alert(response.message);
+                showData();
             } else {
                 alert(response.message);
             }
@@ -176,39 +180,54 @@
     }
 
     function showData() {
-        $.ajax({
-            url: `${baseUrl}/list`,
-            method: "GET",
-            dataType: "json",
-            success: function (response) {
-                let tbody = '';
-                response.data.forEach(function (item, index) {
-                    tbody += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.tanggal}</td>
-                        <td class="fw-medium">${item.nama_transaksi}</td>
-                        <td class="text-danger fw-bold">Rp ${item.harga}</td>
-                        <td><span class="badge bg-info text-dark">${item.kategori}</span></td>
-                        <td><span class="badge bg-${item.type === 'income' ? 'success' : 'danger'} text-white">${item.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-outline-secondary btn-edit" data-id="${item.id}">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${item.id}">Hapus</button>
-                        </td>
-                    </tr>
+        if ($.fn.DataTable.isDataTable('#table-transaksi')) {
+            $('#table-transaksi').DataTable().clear().destroy();
+            $('#table-transaksi tbody').empty();
+        }
+
+        $('#table-transaksi').DataTable({
+            'ajax': {
+                'url': `${baseUrl}/list`,
+                'type': 'GET',
+            },
+            'columns': [
+                {
+                    "data": null,
+                    "render": function (data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                { "data": "tanggal" },
+                { "data": "nama_transaksi" },
+                {
+                    "data": "harga",
+                    "render": function (data, type, row) {
+                        return 'Rp ' + parseFloat(data).toLocaleString();
+                    }
+                },
+                { "data": "kategori" },
+                {
+                    "data": null,
+                    "className": "text-end",
+                    "render": function (data, type, row) {
+                        return `
+                        <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}">Edit</button>
+                        <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}">Hapus</button>
                     `;
-                });
-                $('#tabel-transaksi tbody').html(tbody);
-            }
-        })
+                    }
+                },
+            ],
+            pageLength: 10,
+            destroy: true
+        });
     }
 
     function deleteData() {
-        $(document).on("click", ".btn-delete", function () {
+        $(document).on('click', '.btn-delete', function () {
             let id = $(this).data('id');
             if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
                 $.ajax({
-                    url: `${baseUrl}/delete?id=${id}`,
+                    url: `${baseUrl}/delete`,
                     type: 'POST',
                     data: {
                         id: id

@@ -10,7 +10,7 @@
 
                 <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm"
                     style="background-color: #FFD600; color: #000000; border: none;">
-                    <i class="bi bi-plus-lg"></i> Tambah Transaksi
+                    <i class="bi bi-plus-lg"></i> Tambah Wallet
                 </button>
             </div>
         </div>
@@ -129,29 +129,38 @@
     }
 
     function showData() {
-        $.ajax({
-            url: `${baseUrl}/list`,
-            method: "GET",
-            dataType: "json",
-            success: function (response) {
-                let tbody = '';
-                response.data.forEach(function (item, index) {
-                    tbody += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.nama}</td>
-                        <td class="text-danger fw-bold">Rp ${item.saldo}</td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-outline-secondary btn-edit" data-id="${item.id}">Edit</button>
-                            <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${item.id}">Hapus</button>
-                        </td>
-                    </tr>
-                    `;
-                });
-                $('#tabel-transaksi tbody').html(tbody);
-            }
-        })
-    }
+        if ($.fn.DataTable.isDataTable('#tabel-transaksi')) {
+            $('#tabel-transaksi').DataTable().clear().destroy();
+            $('#tabel-transaksi tbody').empty();
+        }
+
+        $('#tabel-transaksi').DataTable({
+            "ajax": {
+                "url": `${baseUrl}/list`,
+                "type": "GET"
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "nama" },
+                {
+                    "data": "saldo",
+                    "render": function (data, type, row) {
+                        return 'Rp ' + parseFloat(data).toLocaleString('id-ID', { minimumFractionDigits: 2 });
+                    }
+                },
+                {
+                    "data": null,
+                    "className": "text-end",
+                    "render": function (data, type, row) {
+                        return `
+                            <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}">Edit</button>
+                            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}">Hapus</button>
+                        `;
+                    }
+                }
+            ]
+        });
+    };
 
     function deleteData() {
         $(document).on("click", ".btn-delete", function () {
