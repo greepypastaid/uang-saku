@@ -2,13 +2,15 @@
 
 <?= $this->section('content') ?>
 <div class="container mt-4">
-    <div class="card shadow-sm border-0">
+    <div class="">
         <div class="">
             <h1 class="fw-bold">Halaman Wallet</h1>
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <p class="mb-0">Tambah dan kurangi transaksi Anda dengan mudah disini!</p>
+            <div class="page-header">
+                <div class="page-header-text">
+                    <p class="mb-0">Tambah dan kurangi transaksi Anda dengan mudah disini!</p>
+                </div>
 
-                <div class="flex gap-2 d-flex">
+                <div class="page-header-actions">
                     <button id="btn-transfer" class="btn px-4 rounded-3 shadow-sm"
                         style="background-color: #ffa600; color: #000000; border: none;">
                         <i class="bi bi-plus-lg"></i> Transfer Dana
@@ -20,104 +22,106 @@
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            <!-- Tabel -->
-            <div class="table-responsive">
-                <table class="table table-hover align-middle" id="tabel-transaksi">
-                    <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="py-3">#</th>
-                            <th scope="col" class="py-3">Nama</th>
-                            <th scope="col" class="py-1">Saldo</th>
-                            <th scope="col" class="py-3 text-end">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <!-- Tabel -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" id="tabel-transaksi">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" class="py-3">#</th>
+                                <th scope="col" class="py-3">Nama</th>
+                                <th scope="col" class="py-1">Saldo</th>
+                                <th scope="col" class="py-3 text-end">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-
-            <!-- Form Modal Transfer -->
-            <form id="form_wallet">
-                <div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="transaksiModalLabel">Tambah Wallet</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="id" name="id" value="" />
-                                <div class="mb-3">
-                                    <label for="nama" class="form-label">Nama<sup class="text-danger">*</sup></label>
-                                    <input type="text" class="form-control" id="nama" name="nama"
-                                        placeholder="Contoh: BCA" required />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="saldo" class="form-label">Saldo<sup class="text-danger">*</sup></label>
-                                    <input type="number" class="form-control" id="saldo" name="saldo" placeholder="0"
-                                        required />
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <form id="form-transfer">
-                <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="transferModalLabel">Transfer Dana</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="id" name="id" value="" />
-                                <div class="mb-3">
-                                    <label for="wallet_from" class="form-label">Dari Wallet<sup
-                                            class="text-danger">*</sup></label>
-                                    <select class="form-control" id="wallet_from" name="wallet_from" required>
-                                        <option value="">Pilih Wallet</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="wallet_to" class="form-label">Ke Wallet<sup
-                                            class="text-danger">*</sup></label>
-                                    <select class="form-control" id="wallet_to" name="wallet_to" required>
-                                        <option value="">Pilih Wallet</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="amount" class="form-label">Jumlah Transfer<sup
-                                            class="text-danger">*</sup></label>
-                                    <input type="number" class="form-control" id="amount" name="amount" placeholder="0"
-                                        required />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="note" class="form-label">Catatan</label>
-                                    <input type="text" class="form-control" id="note" name="note"
-                                        placeholder="Catatan (opsional)" />
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-primary">Simpan</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
         </div>
+        <!-- Form Modal Transfer -->
+        <form id="form_wallet">
+            <div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="transaksiModalLabel">Tambah Wallet</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="id" name="id" value="" />
+                            <div class="mb-3">
+                                <label for="nama" class="form-label">Nama<sup class="text-danger">*</sup></label>
+                                <input type="text" class="form-control" id="nama" name="nama"
+                                    placeholder="Contoh: BCA" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="saldo" class="form-label">Saldo<sup class="text-danger">*</sup></label>
+                                <input type="number" class="form-control" id="saldo" name="saldo" placeholder="0"
+                                    required />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form id="form-transfer">
+            <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="transferModalLabel">Transfer Dana</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="id" name="id" value="" />
+                            <div class="mb-3">
+                                <label for="wallet_from" class="form-label">Dari Wallet<sup
+                                        class="text-danger">*</sup></label>
+                                <select class="form-control" id="wallet_from" name="wallet_from" required>
+                                    <option value="">Pilih Wallet</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="wallet_to" class="form-label">Ke Wallet<sup
+                                        class="text-danger">*</sup></label>
+                                <select class="form-control" id="wallet_to" name="wallet_to" required>
+                                    <option value="">Pilih Wallet</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Jumlah Transfer<sup
+                                        class="text-danger">*</sup></label>
+                                <input type="number" class="form-control" id="amount" name="amount" placeholder="0"
+                                    required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="note" class="form-label">Catatan</label>
+                                <input type="text" class="form-control" id="note" name="note"
+                                    placeholder="Catatan (opsional)" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 </div>
 <?= $this->endSection() ?>
 
@@ -125,24 +129,24 @@
 <script>
     var baseUrl = window.location.href;
 
-    $(document).ready(function () {
-        $('#btn-tambah').click(function () {
+    $(document).ready(function() {
+        $('#btn-tambah').click(function() {
             $('#form_wallet')[0].reset();
             $('#id').val('');
             $('#walletModal').modal('show');
         });
 
-        $('#form_wallet').submit(function (e) {
+        $('#form_wallet').submit(function(e) {
             e.preventDefault();
             submitData();
         });
 
-        $('#btn-transfer').click(function () {
+        $('#btn-transfer').click(function() {
             $('#form-transfer')[0].reset();
             $('#transferModal').modal('show');
         });
 
-        $('#form-transfer').submit(function (e) {
+        $('#form-transfer').submit(function(e) {
             e.preventDefault();
             let form = {
                 from_wallet_id: $('#wallet_from').val(),
@@ -156,7 +160,7 @@
                 type: 'POST',
                 data: form,
                 dataType: 'json',
-                success: function (res) {
+                success: function(res) {
                     $('#transferModal').modal('hide');
                     if (res.status) {
                         showAlert('success', 'Berhasil', res.message);
@@ -166,7 +170,7 @@
                         showAlert('error', 'Gagal', res.message);
                     }
                 },
-                error: function () {
+                error: function() {
                     showAlert('error', 'Gagal', 'Terjadi error saat melakukan transfer.');
                 }
             });
@@ -199,7 +203,7 @@
                 "data": form
             };
 
-            $.ajax(settings).done(function (response) {
+            $.ajax(settings).done(function(response) {
                 response = JSON.parse(response);
                 console.log(response);
                 $('#walletModal').modal('hide');
@@ -224,27 +228,31 @@
                     "url": `${baseUrl}/list`,
                     "type": "GET"
                 },
-                "columns": [
-                    {
+                responsive: true,
+                "columns": [{
                         "data": null,
-                        "render": function (data, type, row, meta) {
+                        "render": function(data, type, row, meta) {
                             return meta.row + 1;
                         }
                     },
-                    { "data": "nama" },
+                    {
+                        "data": "nama"
+                    },
                     {
                         "data": "saldo",
-                        "render": function (data, type, row) {
-                            return 'Rp ' + parseFloat(data).toLocaleString('id-ID', { minimumFractionDigits: 2 });
+                        "render": function(data, type, row) {
+                            return 'Rp ' + parseFloat(data).toLocaleString('id-ID', {
+                                minimumFractionDigits: 2
+                            });
                         }
                     },
                     {
                         "data": null,
                         "className": "text-end",
-                        "render": function (data, type, row) {
+                        "render": function(data, type, row) {
                             return `
-                            <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}">Edit</button>
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}">Hapus</button>
+                            <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}"><i class="bi bi-trash"></i></button>
                         `;
                         }
                     }
@@ -257,10 +265,10 @@
                 url: `${baseUrl}/list`,
                 type: 'GET',
                 dataType: 'json',
-                success: function (res) {
+                success: function(res) {
                     if (!res || !res.status) return;
                     var opts = '<option value="">Pilih Wallet</option>';
-                    res.data.forEach(function (w) {
+                    res.data.forEach(function(w) {
                         opts += `<option value="${w.id}">${w.nama} - Rp ${parseFloat(w.saldo).toLocaleString('id-ID')}</option>`;
                     });
                     $('#wallet_from').html(opts);
@@ -270,7 +278,7 @@
         }
 
         function deleteData() {
-            $('#tabel-transaksi tbody').on("click", ".btn-delete", function () {
+            $('#tabel-transaksi tbody').on("click", ".btn-delete", function() {
                 let id = $(this).data('id');
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
@@ -286,9 +294,11 @@
                         $.ajax({
                             url: `${baseUrl}/delete?id=${id}`,
                             type: 'POST',
-                            data: { id: id },
+                            data: {
+                                id: id
+                            },
                             dataType: 'json',
-                            success: function (response) {
+                            success: function(response) {
                                 if (response.status) {
                                     showAlert('success', 'Berhasil', response.message);
                                     showData();
@@ -297,7 +307,7 @@
                                     showAlert('error', 'Gagal', response.message);
                                 }
                             },
-                            error: function () {
+                            error: function() {
                                 showAlert('error', 'Gagal', 'Terjadi kesalahan saat menghapus.');
                             }
                         });
@@ -307,7 +317,7 @@
         }
 
         function editData() {
-            $(document).on("click", ".btn-edit", function () {
+            $(document).on("click", ".btn-edit", function() {
                 let id = $(this).data('id');
                 var settings = {
                     "url": `${baseUrl}/read?id=${id}`,
@@ -315,7 +325,7 @@
                     "timeout": 0,
                 };
 
-                $.ajax(settings).done(function (response) {
+                $.ajax(settings).done(function(response) {
                     if (typeof response === 'string') {
                         response = JSON.parse(response);
                     }
