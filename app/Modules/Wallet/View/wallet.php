@@ -104,7 +104,8 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="note" class="form-label">Catatan</label>
-                                    <input type="text" class="form-control" id="note" name="note" placeholder="Catatan (opsional)" />
+                                    <input type="text" class="form-control" id="note" name="note"
+                                        placeholder="Catatan (opsional)" />
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -158,15 +159,15 @@
                 success: function (res) {
                     $('#transferModal').modal('hide');
                     if (res.status) {
-                        alert(res.message);
+                        showAlert('success', 'Berhasil', res.message);
                         showData();
                         loadWalletOptions();
                     } else {
-                        alert(res.message);
+                        showAlert('error', 'Gagal', res.message);
                     }
                 },
                 error: function () {
-                    alert('Terjadi error saat melakukan transfer.');
+                    showAlert('error', 'Gagal', 'Terjadi error saat melakukan transfer.');
                 }
             });
 
@@ -203,11 +204,11 @@
                 console.log(response);
                 $('#walletModal').modal('hide');
                 if (response.status) {
-                    alert(response.message);
+                    showAlert('success', 'Berhasil', response.message);
                     showData();
                     loadWalletOptions();
                 } else {
-                    alert(response.message);
+                    showAlert('error', 'Gagal', response.message);
                 }
             });
         }
@@ -269,27 +270,39 @@
         }
 
         function deleteData() {
-            $(document).on("click", ".btn-delete", function () {
+            $('#tabel-transaksi tbody').on("click", ".btn-delete", function () {
                 let id = $(this).data('id');
-                if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                    $.ajax({
-                        url: `${baseUrl}/delete?id=${id}`,
-                        type: 'POST',
-                        data: {
-                            id: id
-                        },
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.status) {
-                                alert(response.message);
-                                showData();
-                                loadWalletOptions();
-                            } else {
-                                alert(response.message);
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: 'Data ini akan dihapus secara permanen!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `${baseUrl}/delete?id=${id}`,
+                            type: 'POST',
+                            data: { id: id },
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response.status) {
+                                    showAlert('success', 'Berhasil', response.message);
+                                    showData();
+                                    loadWalletOptions();
+                                } else {
+                                    showAlert('error', 'Gagal', response.message);
+                                }
+                            },
+                            error: function () {
+                                showAlert('error', 'Gagal', 'Terjadi kesalahan saat menghapus.');
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
         }
 

@@ -22,8 +22,8 @@ class CreateTransfer extends Migration
         $this->forge->createTable('transfer', true);
 
         // tambahkan FK (sesuaikan nama tabel wallet Anda; contoh: wallets)
-        $this->db->query('ALTER TABLE transfer ADD CONSTRAINT fk_transfer_from_wallet FOREIGN KEY (from_wallet_id) REFERENCES wallets(id) ON DELETE RESTRICT ON UPDATE CASCADE');
-        $this->db->query('ALTER TABLE transfer ADD CONSTRAINT fk_transfer_to_wallet   FOREIGN KEY (to_wallet_id)   REFERENCES wallets(id) ON DELETE RESTRICT ON UPDATE CASCADE');
+        $this->db->query('ALTER TABLE transfer ADD CONSTRAINT fk_transfer_from_wallet FOREIGN KEY (from_wallet_id) REFERENCES wallets(id) ON DELETE CASCADE ON UPDATE CASCADE');
+        $this->db->query('ALTER TABLE transfer ADD CONSTRAINT fk_transfer_to_wallet   FOREIGN KEY (to_wallet_id)   REFERENCES wallets(id) ON DELETE CASCADE ON UPDATE CASCADE');
     }
 
     public function down()

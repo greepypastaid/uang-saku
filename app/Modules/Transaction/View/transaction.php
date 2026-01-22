@@ -171,10 +171,18 @@
             response = JSON.parse(response);
             console.log(response);
             if (response.status) {
-                alert(response.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                });
                 showData();
             } else {
-                alert(response.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: response.message,
+                });
             }
         });
     }
@@ -225,24 +233,50 @@
     function deleteData() {
         $(document).on('click', '.btn-delete', function () {
             let id = $(this).data('id');
-            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-                $.ajax({
-                    url: `${baseUrl}/delete`,
-                    type: 'POST',
-                    data: {
-                        id: id
-                    },
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status) {
-                            alert(response.message);
-                            showData();
-                        } else {
-                            alert(response.message);
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Data ini akan dihapus secara permanen!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `${baseUrl}/delete`,
+                        type: 'POST',
+                        data: {
+                            id: id
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    text: response.message,
+                                });
+                                showData();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal',
+                                    text: response.message,
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Terjadi kesalahan saat menghapus.',
+                            });
                         }
-                    }
-                });
-            }
+                    });
+                }
+            });
         });
     }
 
@@ -258,7 +292,11 @@
 
             $.ajax(settings).done(function (response) {
                 if (response.status === false) {
-                    alert(response.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: response.message,
+                    });
                     return;
                 } else {
                     let data = response.data;

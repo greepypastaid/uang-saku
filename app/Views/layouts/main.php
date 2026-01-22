@@ -32,7 +32,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
         integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
         crossorigin="anonymous"></script>
-    
+
+    <script>
+        function showAlert(type, title, text) {
+            const icon = type === 'success' ? 'success' : 'error';
+            Swal.fire({ icon, title: title || (type === 'success' ? 'Berhasil' : 'Gagal'), text: text || '' });
+        }
+    </script>
+
     <?= $this->renderSection('scripts') ?>
 </body>
 
