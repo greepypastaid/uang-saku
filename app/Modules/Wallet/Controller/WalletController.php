@@ -44,8 +44,42 @@ class WalletController extends BaseController
 
     public function list()
     {
-        $transaksi = $this->walletModel->getAllWallets();
-        return $this->response->setJSON(['status' => true, 'data' => $transaksi]);
+        $req = $this->request;
+        $draw = (int) ($req->getGet('draw') ?? 0);
+        $start = (int) ($req->getGet('start') ?? 0);
+        $length = (int) ($req->getGet('length') ?? 10);
+        $order = (int) ($req->getGet('order') ?? 0);
+
+        $searchValue = $req->getGet('search')['value'] ?? null;
+        $order = $req->getGet('order');
+        $columns = $req->getGet('columns');
+
+        // buat nyari data mentahane tanpa filter
+        $totalBuilder = $this->walletModel->builder();
+        $recordsTotal = (int) $totalBuilder->countAllResults(false);
+
+        // buat filtering search
+        $builder = $this->walletModel->builder();
+
+        if (!empty($searchValue)) {
+            $builder->groupStart()
+                ->like('nama', $searchValue)
+                ->orLike('saldo', $searchValue)
+                ->groupEnd();
+        }
+
+        // itung ulang
+        $countBuilder = clone $builder;
+        $recordsFiltered = (int) $countBuilder->countAllResults(false);
+
+        $data = $builder->limit($length, $start)->orderBy($columns[$order[0]['column']]['data'], $order[0]['dir'])->get()->getResultArray();
+
+        return $this->response->setJSON([
+            'draw' => $draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $data,
+        ]);
     }
 
     public function read()

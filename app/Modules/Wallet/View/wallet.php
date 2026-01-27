@@ -7,13 +7,13 @@
             <h1 class="fw-bold">Halaman Wallet</h1>
             <div class="page-header">
                 <div class="page-header-text">
-                    <p class="mb-0">Tambah dan kurangi transaksi Anda dengan mudah disini!</p>
+                    <p class="mb-0">Kelola saldo dan transfer antar wallet disini!</p>
                 </div>
 
                 <div class="page-header-actions">
                     <button id="btn-transfer" class="btn px-4 rounded-3 shadow-sm"
                         style="background-color: #ffa600; color: #000000; border: none;">
-                        <i class="bi bi-plus-lg"></i> Transfer Dana
+                        <i class="bi bi-arrow-left-right"></i> Transfer Dana
                     </button>
                     <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm"
                         style="background-color: #ffd600; color: #000000; border: none;">
@@ -22,254 +22,244 @@
                 </div>
             </div>
         </div>
+
         <div class="card shadow-sm border-0">
             <div class="card-body">
-                <!-- Tabel -->
+                <div class="row mb-3">
+                </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle" id="tabel-transaksi">
+                    <table class="table table-hover align-middle" id="tabel-wallet">
                         <thead class="table-light">
                             <tr>
-                                <th scope="col" class="py-3">#</th>
-                                <th scope="col" class="py-3">Nama</th>
-                                <th scope="col" class="py-1">Saldo</th>
+                                <th scope="col" class="py-3 text-center">#</th>
+                                <th scope="col" class="py-3">Nama Wallet</th>
+                                <th scope="col" class="py-3 text-end">Saldo</th>
                                 <th scope="col" class="py-3 text-end">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                         </tbody>
                     </table>
+
+                    <nav class="mt-3">
+                        <ul class="pagination justify-content-center" id="pagination-container">
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
-        <!-- Form Modal Transfer -->
-        <form id="form_wallet">
-            <div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="transaksiModalLabel">Tambah Wallet</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" id="id" name="id" value="" />
-                            <div class="mb-3">
-                                <label for="nama" class="form-label">Nama<sup class="text-danger">*</sup></label>
-                                <input type="text" class="form-control" id="nama" name="nama"
-                                    placeholder="Contoh: BCA" required />
-                            </div>
-                            <div class="mb-3">
-                                <label for="saldo" class="form-label">Saldo<sup class="text-danger">*</sup></label>
-                                <input type="number" class="form-control" id="saldo" name="saldo" placeholder="0"
-                                    required />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-        <form id="form-transfer">
-            <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="transferModalLabel">Transfer Dana</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" id="id" name="id" value="" />
-                            <div class="mb-3">
-                                <label for="wallet_from" class="form-label">Dari Wallet<sup
-                                        class="text-danger">*</sup></label>
-                                <select class="form-control" id="wallet_from" name="wallet_from" required>
-                                    <option value="">Pilih Wallet</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="wallet_to" class="form-label">Ke Wallet<sup
-                                        class="text-danger">*</sup></label>
-                                <select class="form-control" id="wallet_to" name="wallet_to" required>
-                                    <option value="">Pilih Wallet</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="amount" class="form-label">Jumlah Transfer<sup
-                                        class="text-danger">*</sup></label>
-                                <input type="number" class="form-control" id="amount" name="amount" placeholder="0"
-                                    required />
-                            </div>
-                            <div class="mb-3">
-                                <label for="note" class="form-label">Catatan</label>
-                                <input type="text" class="form-control" id="note" name="note"
-                                    placeholder="Catatan (opsional)" />
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
     </div>
 </div>
-</div>
+
+<form id="form_wallet">
+    <div class="modal fade" id="walletModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="id" name="id" value="" />
+                    <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Wallet<sup class="text-danger">*</sup></label>
+                        <input type="text" class="form-control" id="nama" name="nama" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="saldo" class="form-label">Saldo Awal<sup class="text-danger">*</sup></label>
+                        <input type="number" class="form-control" id="saldo" name="saldo" placeholder="0" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="form-transfer">
+    <div class="modal fade" id="transferModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transfer Dana</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="wallet_from" class="form-label">Dari Wallet<sup class="text-danger">*</sup></label>
+                        <select class="form-control" id="wallet_from" name="wallet_from" required>
+                            <option value="">Pilih Wallet</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="wallet_to" class="form-label">Ke Wallet<sup class="text-danger">*</sup></label>
+                        <select class="form-control" id="wallet_to" name="wallet_to" required>
+                            <option value="">Pilih Wallet</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Jumlah<sup class="text-danger">*</sup></label>
+                        <input type="number" class="form-control" id="amount" name="amount" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Catatan</label>
+                        <input type="text" class="form-control" id="note" name="note" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Transfer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script>
-    var baseUrl = window.location.href;
+    var baseUrl = '<?= base_url("wallet") ?>';
+    var table;
 
-    $(document).ready(function() {
-        $('#btn-tambah').click(function() {
+    $(document).ready(function () {
+        table = $('#tabel-wallet').DataTable({
+            serverSide: true,
+            processing: true,
+            responsive: true,
+            ajax: {
+                url: `${baseUrl}/list`,
+                type: 'GET',
+                dataSrc: function (json) {
+                    return json.data || [];
+                }
+            },
+            columns: [
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center',
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                { data: 'nama' },
+                {
+                    data: 'saldo',
+                    className: 'text-end',
+                    render: function (data) {
+                        return 'Rp ' + parseFloat(data || 0).toLocaleString('id-ID');
+                    }
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-end',
+                    render: function (data) {
+                        return `
+                            <button class="btn btn-sm btn-primary btn-edit" data-id="${data.id}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-danger btn-delete" data-id="${data.id}"><i class="bi bi-trash"></i></button>
+                        `;
+                    }
+                }
+            ],
+            language: {
+                emptyTable: "Tidak ada data wallet",
+                info: "Menampilkan _START_ sampai _END_ dari total data"
+            },
+            pageLength: 10
+        });
+
+        let delayTimer;
+        $('#search-input').on('keyup', function () {
+            clearTimeout(delayTimer);
+            const val = $(this).val();
+            delayTimer = setTimeout(function () {
+                table.search(val).draw();
+            }, 400);
+        });
+
+        $('#btn-tambah').click(function () {
             $('#form_wallet')[0].reset();
             $('#id').val('');
             $('#walletModal').modal('show');
         });
 
-        $('#form_wallet').submit(function(e) {
-            e.preventDefault();
-            submitData();
-        });
-
-        $('#btn-transfer').click(function() {
+        $('#btn-transfer').click(function () {
             $('#form-transfer')[0].reset();
+            loadWalletOptions();
             $('#transferModal').modal('show');
         });
 
-        $('#form-transfer').submit(function(e) {
+        $('#form_wallet').submit(function (e) {
             e.preventDefault();
-            let form = {
+            let form = new FormData(this);
+            let id = $('#id').val();
+            let url = id ? `${baseUrl}/update` : `${baseUrl}/create`;
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: form,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function (res) {
+                    $('#walletModal').modal('hide');
+                    if (res.status) {
+                        Swal.fire('Berhasil', res.message, 'success');
+                        table.ajax.reload(null, false);
+                        loadWalletOptions();
+                    } else {
+                        Swal.fire('Gagal', res.message || 'Gagal', 'error');
+                    }
+                }
+            });
+        });
+
+        $('#form-transfer').submit(function (e) {
+            e.preventDefault();
+            let payload = {
                 from_wallet_id: $('#wallet_from').val(),
                 to_wallet_id: $('#wallet_to').val(),
                 amount: $('#amount').val(),
                 note: $('#note').val()
             };
-
             $.ajax({
                 url: `${baseUrl}/transfer`,
                 type: 'POST',
-                data: form,
+                data: payload,
                 dataType: 'json',
-                success: function(res) {
+                success: function (res) {
                     $('#transferModal').modal('hide');
                     if (res.status) {
-                        showAlert('success', 'Berhasil', res.message);
-                        showData();
+                        Swal.fire('Berhasil', res.message, 'success');
+                        table.ajax.reload(null, false);
                         loadWalletOptions();
                     } else {
-                        showAlert('error', 'Gagal', res.message);
+                        Swal.fire('Gagal', res.message || 'Gagal', 'error');
                     }
                 },
-                error: function() {
-                    showAlert('error', 'Gagal', 'Terjadi error saat melakukan transfer.');
+                error: function () {
+                    Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
                 }
             });
-
-        })
-
-        function submitData() {
-            let id = $('#id').val();
-            let nama = $('#nama').val();
-            let saldo = $('#saldo').val();
-
-            let form = new FormData();
-            form.append('id', id);
-            form.append('nama', nama);
-            form.append('saldo', saldo);
-
-            let url = `${baseUrl}/create`;
-            if (id !== '') {
-                url = `${baseUrl}/update`;
-                form.append("id", id);
-            }
-
-            let settings = {
-                "url": url,
-                "method": "POST",
-                "timeout": 0,
-                "processData": false,
-                "mimeType": "multipart/form-data",
-                "contentType": false,
-                "data": form
-            };
-
-            $.ajax(settings).done(function(response) {
-                response = JSON.parse(response);
-                console.log(response);
-                $('#walletModal').modal('hide');
-                if (response.status) {
-                    showAlert('success', 'Berhasil', response.message);
-                    showData();
-                    loadWalletOptions();
-                } else {
-                    showAlert('error', 'Gagal', response.message);
-                }
-            });
-        }
-
-        function showData() {
-            if ($.fn.DataTable.isDataTable('#tabel-transaksi')) {
-                $('#tabel-transaksi').DataTable().clear().destroy();
-                $('#tabel-transaksi tbody').empty();
-            }
-
-            $('#tabel-transaksi').DataTable({
-                "ajax": {
-                    "url": `${baseUrl}/list`,
-                    "type": "GET"
-                },
-                responsive: true,
-                "columns": [{
-                        "data": null,
-                        "render": function(data, type, row, meta) {
-                            return meta.row + 1;
-                        }
-                    },
-                    {
-                        "data": "nama"
-                    },
-                    {
-                        "data": "saldo",
-                        "render": function(data, type, row) {
-                            return 'Rp ' + parseFloat(data).toLocaleString('id-ID', {
-                                minimumFractionDigits: 2
-                            });
-                        }
-                    },
-                    {
-                        "data": null,
-                        "className": "text-end",
-                        "render": function(data, type, row) {
-                            return `
-                            <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}"><i class="bi bi-trash"></i></button>
-                        `;
-                        }
-                    }
-                ]
-            });
-        };
+        });
 
         function loadWalletOptions() {
             $.ajax({
-                url: `${baseUrl}/list`,
+                url: `${baseUrl}/list?start=0&length=100`,
                 type: 'GET',
                 dataType: 'json',
-                success: function(res) {
-                    if (!res || !res.status) return;
-                    var opts = '<option value="">Pilih Wallet</option>';
-                    res.data.forEach(function(w) {
-                        opts += `<option value="${w.id}">${w.nama} - Rp ${parseFloat(w.saldo).toLocaleString('id-ID')}</option>`;
+                success: function (res) {
+                    if (!res || !res.data) return;
+                    let opts = '<option value="">Pilih Wallet</option>';
+                    res.data.forEach(function (w) {
+                        opts += `<option value="${w.id}">${w.nama} - Rp ${parseFloat(w.saldo || 0).toLocaleString('id-ID')}</option>`;
                     });
                     $('#wallet_from').html(opts);
                     $('#wallet_to').html(opts);
@@ -277,62 +267,45 @@
             });
         }
 
-        function deleteData() {
-            $('#tabel-transaksi tbody').on("click", ".btn-delete", function() {
-                let id = $(this).data('id');
-                Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: 'Data ini akan dihapus secara permanen!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `${baseUrl}/delete?id=${id}`,
-                            type: 'POST',
-                            data: {
-                                id: id
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                if (response.status) {
-                                    showAlert('success', 'Berhasil', response.message);
-                                    showData();
-                                    loadWalletOptions();
-                                } else {
-                                    showAlert('error', 'Gagal', response.message);
-                                }
-                            },
-                            error: function() {
-                                showAlert('error', 'Gagal', 'Terjadi kesalahan saat menghapus.');
+        $(document).on('click', '.btn-delete', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: 'Yakin hapus?',
+                text: "Saldo di dalam wallet ini akan hilang!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `${baseUrl}/delete`,
+                        type: 'POST',
+                        data: { id: id },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status) {
+                                Swal.fire('Berhasil', response.message, 'success');
+                                table.ajax.reload(null, false);
+                                loadWalletOptions();
+                            } else {
+                                Swal.fire('Gagal', response.message, 'error');
                             }
-                        });
-                    }
-                });
+                        }
+                    });
+                }
             });
-        }
+        });
 
-        function editData() {
-            $(document).on("click", ".btn-edit", function() {
-                let id = $(this).data('id');
-                var settings = {
-                    "url": `${baseUrl}/read?id=${id}`,
-                    "method": "GET",
-                    "timeout": 0,
-                };
-
-                $.ajax(settings).done(function(response) {
-                    if (typeof response === 'string') {
-                        response = JSON.parse(response);
-                    }
-                    if (response.status === false) {
-                        alert(response.message);
-                        return;
-                    } else {
+        $(document).on('click', '.btn-edit', function () {
+            let id = $(this).data('id');
+            $.ajax({
+                url: `${baseUrl}/read`,
+                type: 'GET',
+                data: { id: id },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status) {
                         let data = response.data;
                         $('#form_wallet')[0].reset();
                         $('#id').val(data.id);
@@ -340,17 +313,10 @@
                         $('#saldo').val(data.saldo);
                         $('#walletModal').modal('show');
                     }
-                });
+                }
             });
-        }
-
-        deleteData();
-        editData();
-        showData();
+        });
         loadWalletOptions();
-
     });
 </script>
-
-
 <?= $this->endSection() ?>

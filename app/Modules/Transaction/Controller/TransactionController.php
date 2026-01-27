@@ -112,37 +112,65 @@ class TransactionController extends BaseController
 
     public function list()
     {
-        $page = $this->request->getGet('page') ?? 1;
-        $perPage = 10;
-        $offset = ($page - 1) * $perPage;
-        $keyword = $this->request->getGet('keyword');
+        $req = $this->request;
+        $draw = (int) ($req->getGet('draw') ?? 0);
+        $start = (int) ($req->getGet('start') ?? 0);
+        $length = (int) ($req->getGet('length') ?? 10);
 
+        $searchValue = $req->getGet('search')['value'] ?? null;
+        $order = $req->getGet('order');
+        $columns = $req->getGet('columns');
+
+        // total tanpa pilter
+        $totalBuilder = $this->transactionModel->builder();
+        $recordsTotal = (int) $totalBuilder->countAllResults(false);
+
+        // apply search
         $builder = $this->transactionModel->builder();
 
-        if ($keyword) {
+        if (!empty($searchValue)) {
             $builder->groupStart()
-                ->like('nama_transaksi', $keyword)
-                ->orLike('kategori', $keyword)
+                ->like('nama_transaksi', $searchValue)
+                ->orLike('kategori', $searchValue)
+                ->orLike('harga', $searchValue)
                 ->groupEnd();
         }
 
+        // data setelah di filter wak
         $countBuilder = clone $builder;
-        $totalRows = $countBuilder->countAllResults();
+        $recordsFiltered = (int) $countBuilder->countAllResults(false);
 
-        $data = $builder
-            ->orderBy('tanggal', 'DESC')
-            ->orderBy('id', 'DESC')
-            ->limit($perPage, $offset) 
-            ->get()
-            ->getResultArray();
+        $columnMap = [
+            0 => 'id',
+            1 => 'tanggal',
+            2 => 'nama_transaksi',
+            3 => 'harga',
+            4 => 'kategori',
+            5 => 'id',
+        ];
+
+        // ordering
+        if (!empty($order) && isset($order[0]['column'])) {
+            $colIndex = (int) $order[0]['column'];
+            $colName = $columnMap[$colIndex] ?? 'id';
+            $dir = (isset($order[0]['dir']) && strtolower($order[0]['dir']) === 'asc') ? 'ASC' : 'DESC';
+            $builder->orderBy($colName, $dir);
+        } else {
+            $builder->orderBy('tanggal', 'DESC')->orderBy('id', 'DESC');
+        }
+
+        // limit/offset
+        if ($length != -1) {
+            $builder->limit($length, $start);
+        }
+
+        $data = $builder->get()->getResultArray();
 
         return $this->response->setJSON([
-            'status' => true,
+            'draw' => $draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
             'data' => $data,
-            'currentPage' => (int) $page,
-            'totalPages' => ceil($totalRows / $perPage),
-            'perPage' => $perPage,
-            'totalRows' => $totalRows
         ]);
     }
 

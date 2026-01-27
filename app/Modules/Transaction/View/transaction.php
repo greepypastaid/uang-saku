@@ -18,13 +18,7 @@
         </div>
         <div class="card shadow-sm border-0">
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                            <input type="text" class="form-control" id="search-input" placeholder="Cari transaksi...">
-                        </div>
-                    </div>
+            <div class="row mb-3">
                 </div>
                 <!-- Tabel -->
                 <div class="table-responsive">
@@ -129,24 +123,66 @@
 
     <?= $this->section('scripts') ?>
     <script>
-        var baseUrl = window.location.href;
-        var currentPage = 1;
-        var currentKeyword = '';
+        var baseUrl = '<?= base_url("transaction") ?>';
+        var walletApi = '<?= base_url("wallet") ?>';
         var table;
 
         $(document).ready(function () {
             table = $('#table-transaksi').DataTable({
-                paging: false,
-                info: true,
-                searching: false,
-                ordering: true,
+                serverSide: true,
+                processing: true,
                 responsive: true,
-                language: {
-                    emptyTable: "Tidak ada data transaksi"
+                ajax: {
+                    url: `${baseUrl}/list`,
+                    type: 'GET',
+                    dataSrc: function (json) {
+                        return json.data || [];
+                    }
                 },
-                columnDefs: [
-                    { className: "text-end", targets: [5] }
-                ]
+                columns: [
+                    {
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center',
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    { data: 'tanggal' },
+                    { data: 'nama_transaksi' },
+                    {
+                        data: 'harga',
+                        className: 'text-end',
+                        render: function (data) {
+                            return 'Rp ' + parseFloat(data || 0).toLocaleString('id-ID');
+                        }
+                    },
+                    { data: 'kategori' },
+                    {
+                        data: null,
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-end',
+                        render: function (data) {
+                            return `
+                                <button class="btn btn-sm btn-primary btn-edit" data-id="${data.id}"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-danger btn-delete" data-id="${data.id}"><i class="bi bi-trash"></i></button>
+                            `;
+                        }
+                    }
+                ],
+                language: { emptyTable: "Tidak ada data transaksi" },
+                pageLength: 10
+            });
+
+            let delayTimer;
+            $('#search-input').on('keyup', function () {
+                clearTimeout(delayTimer);
+                let val = $(this).val();
+                delayTimer = setTimeout(function () {
+                    table.search(val).draw();
+                }, 400);
             });
 
             $('#btn-tambah').click(function () {
@@ -157,159 +193,47 @@
 
             $('#form_transaksi').submit(function (e) {
                 e.preventDefault();
-                submitData();
-                $('#transaksiModal').modal('hide');
-                loadData(currentPage, currentKeyword);
-            });
-
-            let delayTimer;
-
-            // buat search
-            $('#search-input').on('keyup', function () {
-                clearTimeout(delayTimer);
-                let keyword = $(this).val();
-
-                delayTimer = setTimeout(function () {
-                    currentKeyword = keyword;
-                    currentPage = 1;
-                    loadData(currentPage, currentKeyword);
-                }, 500); // waktu delayne 500ms mas
-            });
-
-
-            deleteData();
-            editData();
-            loadData(currentPage, currentKeyword);
-        })
-
-        function submitData() {
-            let id = $('#id_transaksi').val();
-            let tanggal = $('#tanggal').val();
-            let nama_transaksi = $('#nama_transaksi').val();
-            let harga = $('#harga').val();
-            let kategori = $('#kategori').val();
-            let type = $('#type').val();
-            let wallet_id = $('#wallet_id').val();
-
-            let form = new FormData();
-            form.append('id', id);
-            form.append('tanggal', tanggal);
-            form.append('nama_transaksi', nama_transaksi);
-            form.append('harga', harga);
-            form.append('kategori', kategori);
-            form.append('type', type);
-            form.append('wallet_id', wallet_id);
-
-            let url = `${baseUrl}/create`;
-            if (id !== '') {
-                url = `${baseUrl}/update`;
-                form.append("id", id);
-            }
-
-            let settings = {
-                "url": url,
-                "method": "POST",
-                "timeout": 0,
-                "processData": false,
-                "mimeType": "multipart/form-data",
-                "contentType": false,
-                "data": form
-            };
-
-            $.ajax(settings).done(function (response) {
-                response = JSON.parse(response);
-                console.log(response);
-                if (response.status) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                    });
-                    loadData(currentPage, currentKeyword);
-                } else {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Berhasil',
-                        text: response.message,
-                    });
-                }
-            });
-        }
-
-        function loadData(page, keyword = '') {
-            $.ajax({
-                url: `${baseUrl}/list?page=${page}&keyword=${keyword}`, type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.status) {
-                        renderTable(response.data, (page - 1) * response.perPage);
-                        renderPagination(response.currentPage, response.totalPages);
+                let form = new FormData(this);
+                let id = $('#id_transaksi').val();
+                let url = id ? `${baseUrl}/update` : `${baseUrl}/create`;
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    success: function (res) {
+                        $('#transaksiModal').modal('hide');
+                        if (res.status) {
+                            Swal.fire('Berhasil', res.message, 'success');
+                            table.ajax.reload(null, false);
+                        } else {
+                            Swal.fire('Gagal', res.message || 'Gagal', 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
                     }
-                }
-            })
-        }
+                });
+            });
 
-        function renderTable(data, startIndex) {
-            table.clear();
-
-            let newRows = [];
-
-            if (data.length > 0) {
-                data.forEach(function (item, index) {
-                    let formatHarga = 'Rp ' + parseFloat(item.harga).toLocaleString('id-ID');
-
-                    let btnAksi = `
-                <button class="btn btn-sm btn-primary btn-edit" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}"><i class="bi bi-trash"></i></button>
-            `;
-                    newRows.push([
-                        startIndex + index + 1, // Kolom #
-                        item.tanggal,           // Kolom Tanggal
-                        item.nama_transaksi,    // Kolom Nama
-                        formatHarga,            // Kolom Harga
-                        item.kategori,          // Kolom Kategori
-                        btnAksi                 // Kolom Aksi
-                    ]);
+            function loadWalletOptions() {
+                $.ajax({
+                    url: `${walletApi}/list?start=0&length=100`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (!res || !res.data) return;
+                        let opts = '<option value=\"\">Pilih Wallet</option>';
+                        res.data.forEach(function (w) {
+                            opts += `<option value="${w.id}">${w.nama} - Rp ${parseFloat(w.saldo || 0).toLocaleString('id-ID')}</option>`;
+                        });
+                        $('#wallet_id').html(opts);
+                    }
                 });
             }
 
-            table.rows.add(newRows).draw();
-        }
-
-        function renderPagination(current, total) {
-            let html = '';
-
-            html += `
-        <li class="page-item ${current === 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" data-page="${current - 1}">Previous</a>
-        </li>`;
-
-            for (let i = 1; i <= total; i++) {
-                html += `
-            <li class="page-item ${i === current ? 'active' : ''}">
-                <a class="page-link" href="#" data-page="${i}">${i}</a>
-            </li>`;
-            }
-
-            html += `
-        <li class="page-item ${current === total ? 'disabled' : ''}">
-            <a class="page-link" href="#" data-page="${current + 1}">Next</a>
-        </li>`;
-
-            $('#pagination-container').html(html);
-        }
-
-        // Event handler untuk klik pagination
-        $(document).on('click', '#pagination-container .page-link', function (e) {
-            e.preventDefault();
-            let page = parseInt($(this).data('page'));
-            if (!isNaN(page) && page > 0) {
-                currentPage = page;
-                loadData(currentPage, currentKeyword);
-            }
-        });
-
-        function deleteData() {
             $(document).on('click', '.btn-delete', function () {
                 let id = $(this).data('id');
                 Swal.fire({
@@ -319,80 +243,60 @@
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal'
+                    confirmButtonText: 'Ya, Hapus!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
                             url: `${baseUrl}/delete`,
                             type: 'POST',
-                            data: {
-                                id: id
-                            },
+                            data: { id: id },
                             dataType: 'json',
                             success: function (response) {
                                 if (response.status) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Berhasil',
-                                        text: response.message,
-                                    });
-                                    loadData(currentPage, currentKeyword);
+                                    Swal.fire('Berhasil', response.message, 'success');
+                                    table.ajax.reload(null, false);
                                 } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Gagal',
-                                        text: response.message,
-                                    });
+                                    Swal.fire('Gagal', response.message, 'error');
                                 }
                             },
                             error: function () {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Gagal',
-                                    text: 'Terjadi kesalahan saat menghapus.',
-                                });
+                                Swal.fire('Error', 'Terjadi kesalahan saat menghapus.', 'error');
                             }
                         });
                     }
                 });
             });
-        }
 
-        function editData() {
-            $(document).on("click", ".btn-edit", function () {
+            $(document).on('click', '.btn-edit', function () {
                 let id = $(this).data('id');
-
-                var settings = {
-                    "url": `${baseUrl}/read?id=${id}`,
-                    "method": "GET",
-                    "timeout": 0,
-                };
-
-                $.ajax(settings).done(function (response) {
-                    if (response.status === false) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: response.message,
-                        });
-                        return;
-                    } else {
-                        let data = response.data;
-                        $('#form_transaksi')[0].reset();
-                        $('#id_transaksi').val(data.id);
-                        $('#tanggal').val(data.tanggal);
-                        $('#nama_transaksi').val(data.nama_transaksi);
-                        $('#harga').val(data.harga);
-                        $('#kategori').val(data.kategori);
-                        $('#type').val(data.type);
-                        $('#wallet_id').val(data.wallet_id);
-                        $('#wallet_id').trigger('change');
-                        $('#transaksiModal').modal('show');
+                $.ajax({
+                    url: `${baseUrl}/read`,
+                    type: 'GET',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.status) {
+                            let data = response.data;
+                            $('#form_transaksi')[0].reset();
+                            $('#id_transaksi').val(data.id);
+                            $('#tanggal').val(data.tanggal);
+                            $('#nama_transaksi').val(data.nama_transaksi);
+                            $('#harga').val(data.harga);
+                            $('#kategori').val(data.kategori);
+                            $('#type').val(data.type);
+                            $('#wallet_id').val(data.wallet_id);
+                            $('#transaksiModal').modal('show');
+                        } else {
+                            Swal.fire('Gagal', response.message || 'Gagal ambil data', 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
                     }
                 });
             });
-        }
+            loadWalletOptions();
+        });
     </script>
 
 

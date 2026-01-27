@@ -165,13 +165,13 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-2 p-0 d-none d-lg-block">
-                <div class="position-fixed vh-100 overflow-auto" style="width: 250px;">
+            <div class="col-lg-2 py-0 d-none d-lg-block">
+                <div class="position-fixed vh-100 overflow-auto" style="">
                     <?= $this->include('../Modules/Dashboard/View/layouts/partials/navbarDashboard') ?>
                 </div>
             </div>
             <div class="col-12 col-lg-10 offset-lg-2 p-0 d-flex flex-column" style="min-height: 100vh;">
-                <main class="flex-grow-1 p-3 p-lg-4">
+                <main class="">
                     <?= $this->renderSection('content') ?>
                 </main>
                 <?= $this->include('../Modules/Dashboard/View/layouts/partials/footerDashboard') ?>
