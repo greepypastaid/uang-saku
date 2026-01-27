@@ -20,7 +20,7 @@
             <div class="card-body">
                 <!-- Tabel -->
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle" id="table-transaksi">
+                    <table class="table table-hover" id="table-transaksi">
                         <thead class="table-light">
                             <tr>
                                 <th scope="col" class="py-3">#</th>
@@ -34,6 +34,10 @@
                         <tbody>
                         </tbody>
                     </table>
+                    <nav class="mt-3">
+                        <ul class="pagination justify-content-center" id="pagination-container">
+                        </ul>
+                    </nav>
                 </div>
 
                 <!-- Form Modal -->
@@ -118,6 +122,7 @@
     <?= $this->section('scripts') ?>
     <script>
         var baseUrl = window.location.href;
+        var currentPage = 1;
 
         $(document).ready(function () {
             $('#btn-tambah').click(function () {
@@ -130,12 +135,14 @@
                 e.preventDefault();
                 submitData();
                 $('#transaksiModal').modal('hide');
-                showData();
+                // showData(); // ganti
+                loadData(currentPage);
             });
 
             deleteData();
             editData();
-            showData();
+            // showData();
+            loadData(currentPage);
         })
 
         function submitData() {
@@ -181,7 +188,8 @@
                         title: 'Berhasil',
                         text: response.message,
                     });
-                    showData();
+                    // showData();
+                    loadData(currentPage);
                 } else {
                     Swal.fire({
                         icon: 'success',
@@ -192,54 +200,128 @@
             });
         }
 
-        function showData() {
-            if ($.fn.DataTable.isDataTable('#table-transaksi')) {
-                $('#table-transaksi').DataTable().clear().destroy();
-                $('#table-transaksi tbody').empty();
+        function loadData(page) {
+            $.ajax({
+                url: `${baseUrl}/list?page=` + page,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.status) {
+                        renderTable(response.data, (page - 1) * response.perPage);
+                        renderPagination(response.currentPage, response.totalPages);
+                    }
+                }
+            })
+        }
+
+        function renderTable(data, startIndex) {
+            let html = '';
+            if (data.length > 0) {
+                data.forEach(function (item, index) {
+                    html += `
+                    <tr>
+                <td>${startIndex + index + 1}</td>
+                <td>${item.tanggal}</td>
+                <td>${item.nama_transaksi}</td>
+                <td>Rp ${parseFloat(item.harga).toLocaleString()}</td>
+                <td>${item.kategori}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-primary btn-edit" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-danger btn-delete" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>`;
+                });
+            } else {
+                html = '<tr><td colspan="6" class="text-center">Tidak ada data.</td></tr>';
+            }
+            $('#table-transaksi tbody').html(html);
+        }
+
+        function renderPagination(current, total) {
+            let html = '';
+
+            // Tombol Previous
+            html += `
+        <li class="page-item ${current === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" data-page="${current - 1}">Previous</a>
+        </li>`;
+
+            // angka halaman
+            for (let i = 1; i <= total; i++) {
+                html += `
+            <li class="page-item ${i === current ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>`;
             }
 
-            $('#table-transaksi').DataTable({
-                'ajax': {
-                    'url': `${baseUrl}/list`,
-                    'type': 'GET',
-                },
-                responsive: true,
-                'columns': [{
-                    "data": null,
-                    "render": function (data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
-                    "data": "tanggal"
-                },
-                {
-                    "data": "nama_transaksi"
-                },
-                {
-                    "data": "harga",
-                    "render": function (data, type, row) {
-                        return 'Rp ' + parseFloat(data).toLocaleString();
-                    }
-                },
-                {
-                    "data": "kategori"
-                },
-                {
-                    "data": null,
-                    "className": "text-end",
-                    "render": function (data, type, row) {
-                        return `
-                        <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}"><i class="bi bi-trash"></i></button>
-                    `;
-                    }
-                },
-                ],
-                pageLength: 10,
-                destroy: true
-            });
+            // Tombol Next
+            html += `
+        <li class="page-item ${current === total ? 'disabled' : ''}">
+            <a class="page-link" href="#" data-page="${current + 1}">Next</a>
+        </li>`;
+
+            $('#pagination-container').html(html);
         }
+
+        // Event handler untuk klik pagination
+        $(document).on('click', '#pagination-container .page-link', function (e) {
+            e.preventDefault();
+            let page = parseInt($(this).data('page'));
+            if (!isNaN(page) && page > 0) {
+                currentPage = page;
+                loadData(currentPage);
+            }
+        });
+
+        // bagian pakai langsung datatable paginationnya wak!
+        // function showData() {
+        //     if ($.fn.DataTable.isDataTable('#table-transaksi')) {
+        //         $('#table-transaksi').DataTable().clear().destroy();
+        //         $('#table-transaksi tbody').empty();
+        //     }
+
+        //     $('#table-transaksi').DataTable({
+        //         'ajax': {
+        //             'url': `${baseUrl}/list`,
+        //             'type': 'GET',
+        //         },
+        //         responsive: true,
+        //         'columns': [{
+        //             "data": null,
+        //             "render": function (data, type, row, meta) {
+        //                 return meta.row + 1;
+        //             }
+        //         },
+        //         {
+        //             "data": "tanggal"
+        //         },
+        //         {
+        //             "data": "nama_transaksi"
+        //         },
+        //         {
+        //             "data": "harga",
+        //             "render": function (data, type, row) {
+        //                 return 'Rp ' + parseFloat(data).toLocaleString();
+        //             }
+        //         },
+        //         {
+        //             "data": "kategori"
+        //         },
+        //         {
+        //             "data": null,
+        //             "className": "text-end",
+        //             "render": function (data, type, row) {
+        //                 return `
+        //                 <button class="btn btn-sm btn-primary btn-edit" data-id="${row.id}"><i class="bi bi-pencil"></i></button>
+        //                 <button class="btn btn-sm btn-danger btn-delete" data-id="${row.id}"><i class="bi bi-trash"></i></button>
+        //             `;
+        //             }
+        //         },
+        //         ],
+        //         pageLength: 10,
+        //         destroy: true
+        //     });
+        // }
 
         function deleteData() {
             $(document).on('click', '.btn-delete', function () {
@@ -269,7 +351,7 @@
                                         title: 'Berhasil',
                                         text: response.message,
                                     });
-                                    showData();
+                                    loadData(currentPage);
                                 } else {
                                     Swal.fire({
                                         icon: 'error',
