@@ -47,13 +47,9 @@ class TransactionController extends BaseController
 
     public function index(): string
     {
-
-        // coba ambil data wallets ah
-
         $wallets = $this->walletModel->findAll();
 
         return view('../Modules/Transaction/View/transaction', ['wallets' => $wallets]);
-
     }
 
 
@@ -116,20 +112,29 @@ class TransactionController extends BaseController
 
     public function list()
     {
-        //request data
         $page = $this->request->getGet('page') ?? 1;
-        $perPage = 6;
-
-        // hitung offset wak
+        $perPage = 10;
         $offset = ($page - 1) * $perPage;
+        $keyword = $this->request->getGet('keyword');
 
-        // Ambil data dengan limit dan offset
-        $data = $this->transactionModel
+        $builder = $this->transactionModel->builder();
+
+        if ($keyword) {
+            $builder->groupStart()
+                ->like('nama_transaksi', $keyword)
+                ->orLike('kategori', $keyword)
+                ->groupEnd();
+        }
+
+        $countBuilder = clone $builder;
+        $totalRows = $countBuilder->countAllResults();
+
+        $data = $builder
             ->orderBy('tanggal', 'DESC')
-            ->findAll($perPage, $offset);
-
-        // Hitung total semua data untuk menentukan jumlah halaman
-        $totalRows = $this->transactionModel->countAllResults();
+            ->orderBy('id', 'DESC')
+            ->limit($perPage, $offset) 
+            ->get()
+            ->getResultArray();
 
         return $this->response->setJSON([
             'status' => true,
@@ -137,9 +142,9 @@ class TransactionController extends BaseController
             'currentPage' => (int) $page,
             'totalPages' => ceil($totalRows / $perPage),
             'perPage' => $perPage,
+            'totalRows' => $totalRows
         ]);
     }
-
 
     public function delete()
     {
