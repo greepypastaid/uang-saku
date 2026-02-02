@@ -9,3 +9,5 @@ use CodeIgniter\Router\RouteCollection;
 foreach (glob(APPPATH . 'Modules/*/Config/*Routes.php') as $file) {
     require $file;
 }
+
+service(name: 'auth')->routes($routes);

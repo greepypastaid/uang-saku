@@ -9,7 +9,7 @@ class WalletModel extends Model
     protected $table = 'wallets';
     protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $allowedFields = ['nama', 'saldo', 'created_at', 'updated_at', 'note'];
+    protected $allowedFields = ['user_id', 'nama', 'saldo', 'created_at', 'updated_at', 'note'];
 
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
@@ -31,8 +31,9 @@ class WalletModel extends Model
     public function createWallet(array $data)
     {
         $now = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO {$this->table} (nama, saldo, created_at, updated_at, note) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO {$this->table} (user_id, nama, saldo, created_at, updated_at, note) VALUES (?, ?, ?, ?, ?, ?)";
         $params = [
+            $data['user_id'] ?? (session()->get('id') ?? null),
             $data['nama'] ?? null,
             $data['saldo'] ?? 0,
             $data['created_at'] ?? $now,
@@ -90,9 +91,15 @@ class WalletModel extends Model
         return $res !== false;
     }
 
-    public function getTotalSaldo(): float
+    public function getTotalSaldo(?int $userId = null): float
     {
-        $query = $this->db->query("SELECT SUM(saldo) AS total FROM {$this->table}");
+        if ($userId === null) {
+            $query = $this->db->query("SELECT SUM(saldo) AS total FROM {$this->table}");
+            $row = $query->getRowArray();
+            return (float) ($row['total'] ?? 0);
+        }
+
+        $query = $this->db->query("SELECT SUM(saldo) AS total FROM {$this->table} WHERE user_id = ?", [$userId]);
         $row = $query->getRowArray();
         return (float) ($row['total'] ?? 0);
     }
@@ -103,7 +110,6 @@ class WalletModel extends Model
         $db->transBegin();
 
         try {
-            // Lock and fetch balances
             $fromRow = $db->query("SELECT saldo FROM {$this->table} WHERE id = ? LIMIT 1", [$fromWalletId])->getRowArray();
             $toRow = $db->query("SELECT saldo FROM {$this->table} WHERE id = ? LIMIT 1", [$toWalletId])->getRowArray();
 
@@ -125,7 +131,6 @@ class WalletModel extends Model
 
             $now = date('Y-m-d H:i:s');
 
-            // update balances
             $res1 = $db->query("UPDATE {$this->table} SET saldo = ?, updated_at = ? WHERE id = ?", [$newFrom, $now, $fromWalletId]);
             $res2 = $db->query("UPDATE {$this->table} SET saldo = ?, updated_at = ? WHERE id = ?", [$newTo, $now, $toWalletId]);
 
@@ -134,7 +139,6 @@ class WalletModel extends Model
                 return false;
             }
 
-            // insert transfer record
             $sql = "INSERT INTO transfer (from_wallet_id, to_wallet_id, amount, note, created_at) VALUES (?, ?, ?, ?, ?)";
             $db->query($sql, [$fromWalletId, $toWalletId, $amount, $note ?? 'Transfer Dana', $now]);
 

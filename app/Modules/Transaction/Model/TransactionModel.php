@@ -9,7 +9,7 @@ class TransactionModel extends Model
     protected $table = "transaksi";
     protected $primaryKey = "id";
     protected $returnType = "array";
-    protected $allowedFields = ['tanggal', 'nama_transaksi', 'harga', 'kategori', 'wallet_id', 'type'];
+    protected $allowedFields = ['user_id', 'tanggal', 'nama_transaksi', 'harga', 'kategori', 'wallet_id', 'transfer_id', 'type'];
     protected $useTimestamps = false;
     protected $validationRules = [
         'tanggal' => 'required',
@@ -30,13 +30,15 @@ class TransactionModel extends Model
 
     public function createTransaction(array $data)
     {
-        $sql = "INSERT INTO {$this->table} (tanggal, nama_transaksi, harga, kategori, wallet_id, `type`) VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO {$this->table} (user_id, tanggal, nama_transaksi, harga, kategori, wallet_id, transfer_id, `type`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $params = [
+            $data['user_id'] ?? null,
             $data['tanggal'] ?? null,
             $data['nama_transaksi'] ?? null,
             $data['harga'] ?? 0,
             $data['kategori'] ?? null,
             $data['wallet_id'] ?? null,
+            $data['transfer_id'] ?? null,
             $data['type'] ?? null,
         ];
         $this->db->query($sql, $params);
@@ -85,16 +87,28 @@ class TransactionModel extends Model
         return $res !== false;
     }
 
-    public function getTotalExpense(): float
+    public function getTotalExpense(?int $userId = null): float
     {
-        $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ?", ['expense']);
+        if ($userId === null) {
+            $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ?", ['expense']);
+            $row = $query->getRowArray();
+            return (float) ($row['total'] ?? 0);
+        }
+
+        $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ? AND user_id = ?", ['expense', $userId]);
         $row = $query->getRowArray();
         return (float) ($row['total'] ?? 0);
     }
 
-    public function getTotalIncome(): float
+    public function getTotalIncome(?int $userId = null): float
     {
-        $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ?", ['income']);
+        if ($userId === null) {
+            $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ?", ['income']);
+            $row = $query->getRowArray();
+            return (float) ($row['total'] ?? 0);
+        }
+
+        $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ? AND user_id = ?", ['income', $userId]);
         $row = $query->getRowArray();
         return (float) ($row['total'] ?? 0);
     }

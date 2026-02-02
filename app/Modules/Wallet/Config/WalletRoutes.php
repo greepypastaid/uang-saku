@@ -1,6 +1,6 @@
 <?php
 
-$routes->group('wallet', ['namespace' => 'App\Modules\Wallet\Controller'], function ($routes) {
+$routes->group('wallet', ['namespace' => 'App\Modules\Wallet\Controller', 'filter' => 'auth'], function ($routes) {
     $routes->get('/', 'WalletController::index');
     $routes->post('create', 'WalletController::create');
     $routes->post('update', 'WalletController::update');

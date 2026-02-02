@@ -23,7 +23,10 @@ class WalletController extends BaseController
     {
         $data = $this->request->getPost();
 
+        $userId = auth()->id();
+
         $arrayWallet = [
+            'user_id' => $userId,
             'nama' => $data['nama'] ?? null,
             'saldo' => $data['saldo'] ?? null,
         ];
@@ -44,22 +47,24 @@ class WalletController extends BaseController
 
     public function list()
     {
+        $userId = auth()->id();
+
         $req = $this->request;
-        $draw = (int) ($req->getGet('draw') ?? 0);
+
         $start = (int) ($req->getGet('start') ?? 0);
         $length = (int) ($req->getGet('length') ?? 10);
-        $order = (int) ($req->getGet('order') ?? 0);
-
         $searchValue = $req->getGet('search')['value'] ?? null;
+
         $order = $req->getGet('order');
         $columns = $req->getGet('columns');
 
-        // buat nyari data mentahane tanpa filter
+        // Hitung total data milik user tertentu cok
         $totalBuilder = $this->walletModel->builder();
+        $totalBuilder->where('user_id', $userId);
         $recordsTotal = (int) $totalBuilder->countAllResults(false);
 
-        // buat filtering search
         $builder = $this->walletModel->builder();
+        $builder->where('user_id', $userId);
 
         if (!empty($searchValue)) {
             $builder->groupStart()
@@ -68,14 +73,25 @@ class WalletController extends BaseController
                 ->groupEnd();
         }
 
-        // itung ulang
+        // Hitung data setelah difilter (untuk pagination)
         $countBuilder = clone $builder;
         $recordsFiltered = (int) $countBuilder->countAllResults(false);
 
-        $data = $builder->limit($length, $start)->orderBy($columns[$order[0]['column']]['data'], $order[0]['dir'])->get()->getResultArray();
+        if (!empty($order) && !empty($columns) && isset($order[0])) {
+            $columnIndex = $order[0]['column'];
+            $sortDir = $order[0]['dir'];
+
+            $columnName = $columns[$columnIndex]['data'] ?? 'id';
+
+            $builder->orderBy($columnName, $sortDir);
+        } else {
+            $builder->orderBy('id', 'DESC');
+        }
+
+        $data = $builder->limit($length, $start)->get()->getResultArray();
 
         return $this->response->setJSON([
-            'draw' => $draw,
+            'draw' => (int) ($req->getGet('draw') ?? 0),
             'recordsTotal' => $recordsTotal,
             'recordsFiltered' => $recordsFiltered,
             'data' => $data,
@@ -92,6 +108,8 @@ class WalletController extends BaseController
     public function delete()
     {
         $data = $this->request->getPost();
+        $userId = auth()->id();
+
         if (!isset($data['id'])) {
             return $this->response->setJSON(['status' => false, 'message' => 'ID Wallet wajib diisi.']);
         }

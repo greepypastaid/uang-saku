@@ -119,6 +119,7 @@
             }
         }
     </style>
+    <?= csrf_meta() ?> </head>
 </head>
 
 <body class="bg-light">

@@ -18,7 +18,7 @@
         </div>
         <div class="card shadow-sm border-0">
             <div class="card-body">
-            <div class="row mb-3">
+                <div class="row mb-3">
                 </div>
                 <!-- Tabel -->
                 <div class="table-responsive">
@@ -98,10 +98,6 @@
                                                 class="text-danger">*</sup></label>
                                         <select class="form-select" id="wallet_id" name="wallet_id" required>
                                             <option value="" selected disabled>Pilih Wallet</option>
-                                            <?php foreach ($wallets as $wallet): ?>
-                                                <option value="<?= $wallet['id'] ?>"><?= $wallet['nama'] ?>
-                                                </option>
-                                            <?php endforeach; ?>
                                         </select>
                                     </div>
                                 </div>
@@ -126,6 +122,12 @@
         var baseUrl = '<?= base_url("transaction") ?>';
         var walletApi = '<?= base_url("wallet") ?>';
         var table;
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
         $(document).ready(function () {
             table = $('#table-transaksi').DataTable({
@@ -224,11 +226,18 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function (res) {
-                        if (!res || !res.data) return;
-                        let opts = '<option value=\"\">Pilih Wallet</option>';
-                        res.data.forEach(function (w) {
-                            opts += `<option value="${w.id}">${w.nama} - Rp ${parseFloat(w.saldo || 0).toLocaleString('id-ID')}</option>`;
-                        });
+                        let opts = '<option value="" selected disabled>Pilih Wallet</option>';
+
+                        if (!res.data || res.data.length === 0) {
+                            opts = '<option value="" disabled>Anda belum memiliki Wallet!</option>';
+                            $('#form_transaksi button[type="submit"]').prop('disabled', true);
+                        } else {
+                            $('#form_transaksi button[type="submit"]').prop('disabled', false);
+
+                            res.data.forEach(function (w) {
+                                opts += `<option value="${w.id}">${w.nama} (Sisa: Rp ${parseFloat(w.saldo || 0).toLocaleString('id-ID')})</option>`;
+                            });
+                        }
                         $('#wallet_id').html(opts);
                     }
                 });

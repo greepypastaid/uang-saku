@@ -25,9 +25,10 @@ class DashboardController extends BaseController
 
     function getData()
     {
-        $totalSaldo = $this->walletModel->getTotalSaldo();
-        $totalPengeluaran = $this->transactionModel->getTotalExpense();
-        $totalPemasukan = $this->transactionModel->getTotalIncome();
+        $userId = auth()->id() ?? session()->get('id');
+        $totalSaldo = $this->walletModel->getTotalSaldo($userId);
+        $totalPengeluaran = $this->transactionModel->getTotalExpense($userId);
+        $totalPemasukan = $this->transactionModel->getTotalIncome($userId);
 
         return $this->response->setJSON([
             'total_saldo' => $totalSaldo,
