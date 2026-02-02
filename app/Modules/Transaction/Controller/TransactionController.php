@@ -250,13 +250,13 @@ class TransactionController extends BaseController
     {
 
         $data = $this->request->getPost();
+        $id = $data['id'] ?? $data['id_transaksi'] ?? null;
 
-        if (!isset($data['id'])) {
-
+        if (!$id) {
             return $this->response->setJSON(['status' => false, 'message' => 'ID transaksi wajib diisi.']);
-
         }
 
+        $data['id'] = $id;
 
         $arrayTransaksi = [
 
@@ -274,15 +274,12 @@ class TransactionController extends BaseController
 
         ];
 
-
-        // ambil data lama yax
-
         $uangLama = $this->transactionModel->getTransactionById($data['id']);
 
 
         if ($uangLama && !empty($uangLama['wallet_id'])) {
 
-            $tandaOld = ($uangLama['type'] === 'income') ? -1 : 1; #terima kasih tab tab wkwk
+            $tandaOld = ($uangLama['type'] === 'income') ? -1 : 1;
 
             $this->adjustWalletSaldo((int) $uangLama['wallet_id'], $tandaOld * (float) $uangLama['harga']);
 
@@ -308,7 +305,7 @@ class TransactionController extends BaseController
         }
 
 
-        return $this->response->setJSON(['status' => false, 'message' => 'Berhasil Memperbarui data transaksi.']);
+        return $this->response->setJSON(['status' => true, 'message' => 'Berhasil Memperbarui data transaksi.']);
 
     }
 

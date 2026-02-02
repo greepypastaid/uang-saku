@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Modules\Transaction\Model;
 
@@ -12,46 +12,90 @@ class TransactionModel extends Model
     protected $allowedFields = ['tanggal', 'nama_transaksi', 'harga', 'kategori', 'wallet_id', 'type'];
     protected $useTimestamps = false;
     protected $validationRules = [
-        'tanggal'        => 'required',
+        'tanggal' => 'required',
         'nama_transaksi' => 'required',
-        'harga'          => 'required|numeric',
-        'kategori'       => 'required',
-        'wallet_id'      => 'permit_empty|integer',
-        'type'           => 'required|in_list[income,expense]',
+        'harga' => 'required|numeric',
+        'kategori' => 'required',
+        'wallet_id' => 'permit_empty|integer',
+        'type' => 'required|in_list[income,expense]',
     ];
+
+    protected $db;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->db = \Config\Database::connect();
+    }
 
     public function createTransaction(array $data)
     {
-        return $this->insert($data);
+        $sql = "INSERT INTO {$this->table} (tanggal, nama_transaksi, harga, kategori, wallet_id, `type`) VALUES (?, ?, ?, ?, ?, ?)";
+        $params = [
+            $data['tanggal'] ?? null,
+            $data['nama_transaksi'] ?? null,
+            $data['harga'] ?? 0,
+            $data['kategori'] ?? null,
+            $data['wallet_id'] ?? null,
+            $data['type'] ?? null,
+        ];
+        $this->db->query($sql, $params);
+        return (int) $this->db->insertID();
     }
 
     public function getAllTransactions(): array
     {
-        return $this->findAll();
+        $query = $this->db->query("SELECT * FROM {$this->table} ORDER BY tanggal DESC, id DESC");
+        return $query->getResultArray();
     }
 
     public function getTransactionById($id): ?array
     {
-        return $this->find($id);
+        $query = $this->db->query("SELECT * FROM {$this->table} WHERE id = ? LIMIT 1", [$id]);
+        $row = $query->getRowArray();
+        return $row ?: null;
     }
 
     public function updateTransaction($id, array $data)
     {
-        return $this->update($id, $data);
+        $sets = [];
+        $params = [];
+
+        foreach ($data as $k => $v) {
+            if (in_array($k, $this->allowedFields, true)) {
+                $sets[] = "`$k` = ?";
+                $params[] = $v;
+            }
+        }
+
+        if (empty($sets)) {
+            return false;
+        }
+
+        $params[] = $id;
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $sets) . " WHERE id = ?";
+        $res = $this->db->query($sql, $params);
+
+        return $res !== false;
     }
 
     public function deleteTransaction($id)
     {
-        return $this->delete($id);
+        $res = $this->db->query("DELETE FROM {$this->table} WHERE id = ?", [$id]);
+        return $res !== false;
     }
 
     public function getTotalExpense(): float
     {
-    return $this->selectSum('harga')->where('type', 'expense')->get()->getRowArray()['harga'] ?? 0;
+        $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ?", ['expense']);
+        $row = $query->getRowArray();
+        return (float) ($row['total'] ?? 0);
     }
 
     public function getTotalIncome(): float
     {
-        return $this->selectSum('harga')->where('type', 'income')->get()->getRowArray()['harga'] ?? 0;
+        $query = $this->db->query("SELECT SUM(harga) AS total FROM {$this->table} WHERE `type` = ?", ['income']);
+        $row = $query->getRowArray();
+        return (float) ($row['total'] ?? 0);
     }
 }

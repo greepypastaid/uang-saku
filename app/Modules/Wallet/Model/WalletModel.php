@@ -15,77 +15,131 @@ class WalletModel extends Model
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
-    public function createWallet($data)
+    protected $validationRules = [
+        'nama' => 'required',
+        'saldo' => 'permit_empty|numeric',
+    ];
+
+    protected $db;
+
+    public function __construct()
     {
-        return $this->insert($data);
+        parent::__construct();
+        $this->db = \Config\Database::connect();
     }
 
-    public function updateWallet($id, $data)
+    public function createWallet(array $data)
     {
-        return $this->update($id, $data);
+        $now = date('Y-m-d H:i:s');
+        $sql = "INSERT INTO {$this->table} (nama, saldo, created_at, updated_at, note) VALUES (?, ?, ?, ?, ?)";
+        $params = [
+            $data['nama'] ?? null,
+            $data['saldo'] ?? 0,
+            $data['created_at'] ?? $now,
+            $data['updated_at'] ?? $now,
+            $data['note'] ?? null,
+        ];
+        $this->db->query($sql, $params);
+        return (int) $this->db->insertID();
+    }
+
+    public function getAllWallets(): array
+    {
+        $query = $this->db->query("SELECT * FROM {$this->table} ORDER BY id DESC");
+        return $query->getResultArray();
+    }
+
+    public function getWalletById($id): ?array
+    {
+        $query = $this->db->query("SELECT * FROM {$this->table} WHERE id = ? LIMIT 1", [$id]);
+        $row = $query->getRowArray();
+        return $row ?: null;
+    }
+
+    public function updateWallet($id, array $data)
+    {
+        $sets = [];
+        $params = [];
+
+        foreach ($data as $k => $v) {
+            if (in_array($k, $this->allowedFields, true)) {
+                $sets[] = "`$k` = ?";
+                $params[] = $v;
+            }
+        }
+
+        if ($this->useTimestamps && !in_array($this->updatedField, array_keys($data), true)) {
+            $sets[] = "`{$this->updatedField}` = ?";
+            $params[] = date('Y-m-d H:i:s');
+        }
+
+        if (empty($sets)) {
+            return false;
+        }
+
+        $params[] = $id;
+        $sql = "UPDATE {$this->table} SET " . implode(', ', $sets) . " WHERE id = ?";
+        $res = $this->db->query($sql, $params);
+
+        return $res !== false;
     }
 
     public function deleteWallet($id)
     {
-        return $this->delete($id);
-    }
-
-    public function getWalletById($id)
-    {
-        return $this->find($id);
-    }
-
-    public function getAllWallets()
-    {
-        return $this->findAll();
+        $res = $this->db->query("DELETE FROM {$this->table} WHERE id = ?", [$id]);
+        return $res !== false;
     }
 
     public function getTotalSaldo(): float
     {
-        return (float) $this->selectSum('saldo')->get()->getRowArray()['saldo'] ?? 0;
+        $query = $this->db->query("SELECT SUM(saldo) AS total FROM {$this->table}");
+        $row = $query->getRowArray();
+        return (float) ($row['total'] ?? 0);
     }
 
     public function transferFunds($fromWalletId, $toWalletId, $amount, $note = null)
     {
-        $fromWallet = $this->find($fromWalletId);
-        $toWallet = $this->find($toWalletId);
-
-        if (!$fromWallet || !$toWallet) {
-            return false;
-        }
-
-        if ((float) $fromWallet['saldo'] < (float) $amount) {
-            return false;
-        }
-
-        $db = \Config\Database::connect();
+        $db = $this->db;
         $db->transBegin();
 
         try {
-            $this->update($fromWalletId, [
-                'saldo' => (float) $fromWallet['saldo'] - (float) $amount
-            ]);
+            // Lock and fetch balances
+            $fromRow = $db->query("SELECT saldo FROM {$this->table} WHERE id = ? LIMIT 1", [$fromWalletId])->getRowArray();
+            $toRow = $db->query("SELECT saldo FROM {$this->table} WHERE id = ? LIMIT 1", [$toWalletId])->getRowArray();
 
-            $this->update($toWalletId, [
-                'saldo' => (float) $toWallet['saldo'] + (float) $amount
-            ]);
+            if (!$fromRow || !$toRow) {
+                $db->transRollback();
+                return false;
+            }
+
+            $fromSaldo = (float) $fromRow['saldo'];
+            $toSaldo = (float) $toRow['saldo'];
+
+            if ($fromSaldo < (float) $amount) {
+                $db->transRollback();
+                return false;
+            }
+
+            $newFrom = $fromSaldo - (float) $amount;
+            $newTo = $toSaldo + (float) $amount;
 
             $now = date('Y-m-d H:i:s');
 
-            $transferTable = $db->table('transfer');
-            $transferTable->insert([
-                'from_wallet_id' => $fromWalletId,
-                'to_wallet_id' => $toWalletId,
-                'amount' => $amount,
-                'note' => $note ?? 'Transfer Dana',
-                'created_at' => $now,
-            ]);
+            // update balances
+            $res1 = $db->query("UPDATE {$this->table} SET saldo = ?, updated_at = ? WHERE id = ?", [$newFrom, $now, $fromWalletId]);
+            $res2 = $db->query("UPDATE {$this->table} SET saldo = ?, updated_at = ? WHERE id = ?", [$newTo, $now, $toWalletId]);
 
-            $transferId = $db->insertID();
+            if ($res1 === false || $res2 === false) {
+                $db->transRollback();
+                return false;
+            }
+
+            // insert transfer record
+            $sql = "INSERT INTO transfer (from_wallet_id, to_wallet_id, amount, note, created_at) VALUES (?, ?, ?, ?, ?)";
+            $db->query($sql, [$fromWalletId, $toWalletId, $amount, $note ?? 'Transfer Dana', $now]);
 
             $db->transCommit();
             return true;
-
         } catch (\Throwable $e) {
             $db->transRollback();
             log_message('error', $e->getMessage());
