@@ -20,6 +20,10 @@ class DashboardController extends BaseController
     }
     public function index()
     {
+        if (! auth()->loggedIn()) {
+            return redirect()->to('/login');
+        }
+
         return view('../Modules/Dashboard/View/dashboard');
     }
 

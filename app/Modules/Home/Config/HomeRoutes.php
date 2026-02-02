@@ -12,3 +12,8 @@ $routes->group('', ['namespace' => 'App\Modules\Home\Controller'], function ($ro
         return view('../Modules/Home/View/about');
     });
 });
+
+$routes->group('', ['namespace' => 'App\Modules\Dashboard\Controller', 'filter' => 'auth'], function ($routes) {
+    $routes->get('/dashboard', 'DashboardController::index');
+    $routes->get('/dashboard/data', 'DashboardController::getData');
+});
