@@ -31,8 +31,8 @@ class View extends BaseView
      * in order for them to be available for use within the Parser.
      *
      * Examples:
-     *  { title|esc(js) }
-     *  { created_on|date(Y-m-d)|esc(attr) }
+     * { title|esc(js) }
+     * { created_on|date(Y-m-d)|esc(attr) }
      *
      * @var         array<string, string>
      * @phpstan-var array<string, parser_callable_string>
@@ -59,4 +59,14 @@ class View extends BaseView
      * @var list<class-string<ViewDecoratorInterface>>
      */
     public array $decorators = [];
+
+    /**
+     * --------------------------------------------------------------------------
+     * View Overrides Folder
+     * --------------------------------------------------------------------------
+     *
+     * The folder within `Config\Paths::$viewDirectory` that contains
+     * the view overrides.
+     */
+    public string $appOverridesFolder = '';
 }
