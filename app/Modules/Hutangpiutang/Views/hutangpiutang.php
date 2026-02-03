@@ -3,8 +3,12 @@
 <?= $this->section('content') ?>
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="fw-bold">Hutang & Piutang</h1>
-        <button class="btn btn-warning fw-bold" onclick="openCreateModal()">
+        <div>
+            <h1 class="fw-bold">Hutang & Piutang</h1>
+            <p class="text-muted mb-0">Bayar Hutangmu dan jangan lupa tagihilah karena itu hakmu!</p>
+        </div>
+        <button class="btn btn-warning px-4 rounded-5" style="background-color: #FFD600; color: #000000;"
+            onclick="openCreateModal()">
             <i class="bi bi-plus-lg"></i> Catat Baru
         </button>
     </div>
@@ -38,7 +42,8 @@
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning small">
-                    <i class="bi bi-exclamation-circle"></i> Saldo Wallet yang dipilih akan otomatis <b>bertambah</b> (jika Hutang) atau <b>berkurang</b> (jika Piutang).
+                    <i class="bi bi-exclamation-circle"></i> Saldo Wallet yang dipilih akan otomatis <b>bertambah</b>
+                    (jika Hutang) atau <b>berkurang</b> (jika Piutang).
                 </div>
 
                 <div class="mb-3">
@@ -48,13 +53,14 @@
                         <option value="piutang">Piutang (Saya Pinjamkan Uang)</option>
                     </select>
                 </div>
-                
+
                 <div class="mb-3">
                     <label class="form-label">Pilih Wallet (Sumber/Tujuan Dana)</label>
                     <select name="wallet_id" class="form-select" required>
                         <option value="">-- Pilih Wallet --</option>
                         <?php foreach ($wallets as $w): ?>
-                            <option value="<?= $w['id'] ?>"><?= $w['nama'] ?> (Rp <?= number_format($w['saldo']) ?>)</option>
+                            <option value="<?= $w['id'] ?>"><?= $w['nama'] ?> (Rp <?= number_format($w['saldo']) ?>)
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -166,8 +172,8 @@
                     data: 'type',
                     render: function (data) {
                         return data === 'hutang'
-                            ? '<span class="badge bg-danger text-uppercase">Hutang</span>'
-                            : '<span class="badge bg-success text-uppercase">Piutang</span>';
+                            ? '<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">Hutang</span>'
+                            : '<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">Piutang</span>';
                     }
                 },
                 { data: 'person_name' },
@@ -179,31 +185,34 @@
                     data: 'status', className: 'text-center',
                     render: function (data) {
                         return data === 'paid'
-                            ? '<span class="badge bg-primary">Lunas</span>'
-                            : '<span class="badge bg-secondary">Belum Lunas</span>';
+                            ? '<span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">Lunas</span>'
+                            : '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-2">Belum Lunas</span>';
                     }
                 },
                 {
                     data: null, className: 'text-end',
                     render: function (data) {
                         let btnPelunasan = '';
+
                         if (data.status !== 'paid') {
                             btnPelunasan = `
-                            <button class="btn btn-sm btn-success me-1" onclick="openPelunasanModal(${data.id})" title="Tandai Lunas">
-                                <i class="bi bi-check-lg"></i>
-                            </button>`;
+                <button class="btn badge rounded-pill bg-success-subtle text-success border-0 me-1 px-3 py-2" onclick="openPelunasanModal(${data.id})" title="Tandai Lunas">
+                    <i class="bi bi-check-circle-fill me-1"></i> Lunas
+                </button>`;
                         } else {
-                            btnPelunasan = `<span class="badge bg-light text-dark me-2 border">Selesai</span>`;
+                            btnPelunasan = `<span class="badge rounded-pill bg-light text-secondary border px-3 py-2 me-2"><i class="bi bi-check2-all"></i> Selesai</span>`;
                         }
 
                         return `
-                        ${btnPelunasan}
-                        <button class="btn btn-sm btn-primary me-1" onclick="openEditModal(${data.id})" title="Edit">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteHutangPiutang(${data.id})" title="Hapus">
-                            <i class="bi bi-trash"></i>
-                        </button>`;
+            ${btnPelunasan}
+            
+            <button class="btn badge rounded-pill bg-warning-subtle text-warning-emphasis border-0 me-1 px-3 py-2" onclick="openEditModal(${data.id})" title="Edit">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+            
+            <button class="btn badge rounded-pill bg-danger-subtle text-danger border-0 px-3 py-2" onclick="deleteHutangPiutang(${data.id})" title="Hapus">
+                <i class="bi bi-trash"></i>
+            </button>`;
                     }
                 }
             ]
@@ -261,8 +270,8 @@
     }
 
     function openEditModal(id) {
-        $.get(`${baseUrl}/read?id=${id}`, function(res) {
-            if(res.status) {
+        $.get(`${baseUrl}/read?id=${id}`, function (res) {
+            if (res.status) {
                 let d = res.data;
                 $('#edit_id').val(d.id);
                 $('#edit_person_name').val(d.person_name);

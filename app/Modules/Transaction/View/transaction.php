@@ -10,7 +10,7 @@
             </div>
 
             <div class="page-header-actions">
-                <button id="btn-tambah" class="btn px-4 rounded-3 shadow-sm"
+                <button id="btn-tambah" class="btn px-4 rounded-5 shadow-sm"
                     style="background-color: #FFD600; color: #000000; border: none;">
                     <i class="bi bi-plus-lg"></i> Tambah Transaksi
                 </button>
@@ -168,9 +168,13 @@
                         className: 'text-end',
                         render: function (data) {
                             return `
-                                <button class="btn btn-sm btn-primary btn-edit" data-id="${data.id}"><i class="bi bi-pencil"></i></button>
-                                <button class="btn btn-sm btn-danger btn-delete" data-id="${data.id}"><i class="bi bi-trash"></i></button>
-                            `;
+        <button class="btn badge rounded-pill bg-warning-subtle text-warning-emphasis border-0 me-1 px-3 py-2 btn-edit" data-id="${data.id}">
+            <i class="bi bi-pencil-square me-1"></i> Edit
+        </button>
+        <button class="btn badge rounded-pill bg-danger-subtle text-danger border-0 px-3 py-2 btn-delete" data-id="${data.id}">
+            <i class="bi bi-trash me-1"></i> Hapus
+        </button>
+    `;
                         }
                     }
                 ],

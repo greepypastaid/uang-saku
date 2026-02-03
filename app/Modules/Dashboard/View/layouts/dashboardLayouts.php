@@ -157,8 +157,20 @@
                             href="<?= base_url('/transaction') ?>">Transactions</a>
                     </li>
                     <li class="nav-item w-100">
+                        <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/hutangpiutang' ? ' fw-bold text-black' : '' ?>"
+                            href="<?= base_url('/hutangpiutang') ?>">Hutang & Piutang</a>
+                    </li>
+                    <li class="nav-item w-100">
                         <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/wallet' ? ' fw-bold text-black' : '' ?>"
                             href="<?= base_url('/wallet') ?>">Wallets</a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/logmutasi' ? ' fw-bold text-black' : '' ?>"
+                            href="<?= base_url('/transaction/log') ?>">Log Mutasi</a>
+                    </li>
+                    <li class="nav-item w-100">
+                        <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/wallet' ? ' fw-bold text-black' : '' ?>"
+                            href="<?= base_url('/logout') ?>">Logout</a>
                     </li>
                 </ul>
             </nav>

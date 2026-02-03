@@ -34,6 +34,11 @@ $currentPath = preg_replace('#^/index\.php#', '', $request->getUri()->getPath())
           href="<?= base_url('/wallet') ?>" style="font-size: 1.2em;"><i class="bi bi-wallet2 me-2"></i>Wallets</a>
       </li>
       <li class="nav-item w-100">
+        <a class="nav-link text-secondary<?= $currentPath === '/transaction/log' ? ' fw-bold text-black' : '' ?>"
+          href="<?= base_url('/transaction/log') ?>" style="font-size: 1.2em;"><i
+            class="bi bi-card-list me-2"></i>Log Mutasi</a>
+      </li>
+      <li class="nav-item w-100">
         <a id="logout-link"
           class="nav-link text-secondary<?= $currentPath === '/logout' ? ' fw-bold text-black' : '' ?>"
           href="<?= base_url('/logout') ?>" style="font-size: 1.2em;"><i

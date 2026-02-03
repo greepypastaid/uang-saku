@@ -150,9 +150,11 @@
                 { data: 'nama' },
                 {
                     data: 'saldo',
-                    className: 'text-end',
+                    className: 'text-end fw-bold',
                     render: function (data) {
-                        return 'Rp ' + parseFloat(data || 0).toLocaleString('id-ID');
+                        // Memberi warna hijau jika saldo positif
+                        let colorClass = parseFloat(data) >= 0 ? 'text-success' : 'text-danger';
+                        return `<span class="${colorClass}">Rp ` + parseFloat(data || 0).toLocaleString('id-ID') + `</span>`;
                     }
                 },
                 {
@@ -162,9 +164,14 @@
                     className: 'text-end',
                     render: function (data) {
                         return `
-                            <button class="btn btn-sm btn-primary btn-edit" data-id="${data.id}"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger btn-delete" data-id="${data.id}"><i class="bi bi-trash"></i></button>
-                        `;
+                <button class="btn badge rounded-pill bg-warning-subtle text-warning-emphasis border-0 me-1 px-3 py-2 btn-edit" data-id="${data.id}" title="Edit Wallet">
+                    <i class="bi bi-pencil-square"></i>
+                </button>
+                
+                <button class="btn badge rounded-pill bg-danger-subtle text-danger border-0 px-3 py-2 btn-delete" data-id="${data.id}" title="Hapus Wallet">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
                     }
                 }
             ],

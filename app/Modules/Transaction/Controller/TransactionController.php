@@ -69,6 +69,10 @@ class TransactionController extends BaseController
         return $this->response->setJSON(['status' => false, 'message' => 'Gagal menyimpan data transaksi.']);
     }
 
+    public function log(){
+        return view('../Modules/Transaction/View/log_mutation');
+    }
+
     public function list()
     {
         $req = $this->request;
@@ -80,11 +84,16 @@ class TransactionController extends BaseController
         $columns = $req->getGet('columns');
 
         $userId = auth()->id();
+        $mode = $req->getGet('mode') ?? 'daily';
 
         $totalBuilder = $this->transactionModel->builder()->where('user_id', $userId);
         $recordsTotal = (int) $totalBuilder->countAllResults(false);
 
         $builder = $this->transactionModel->builder()->where('user_id', $userId);
+
+        if ($mode === 'daily') {
+            $builder->where('kategori !=', 'Hutang/Piutang');
+        }
 
         if (!empty($searchValue)) {
             $builder->groupStart()
