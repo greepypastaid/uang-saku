@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\HutangPiutang\Controllers;
+namespace App\Modules\Hutangpiutang\Controllers;
 
 use App\Controllers\BaseController;
-use App\Modules\HutangPiutang\Models\HutangPiutangModel;
+use App\Modules\Hutangpiutang\Models\HutangPiutangModel;
 use App\Modules\Transaction\Model\TransactionModel;
 use App\Modules\Wallet\Model\WalletModel;
 
