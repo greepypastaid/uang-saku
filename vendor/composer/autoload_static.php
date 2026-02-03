@@ -118,6 +118,8 @@ class ComposerStaticInit657ac079313fab046eb8c29fe1d6992b
         'App\\Controllers\\Home' => __DIR__ . '/../..' . '/app/Controllers/Home.php',
         'App\\Modules\\Dashboard\\Controller\\DashboardController' => __DIR__ . '/../..' . '/app/Modules/Dashboard/Controller/DashboardController.php',
         'App\\Modules\\Home\\Controller\\HomeController' => __DIR__ . '/../..' . '/app/Modules/Home/Controller/HomeController.php',
+        'App\\Modules\\HutangPiutang\\Controllers\\HutangPiutangController' => __DIR__ . '/../..' . '/app/Modules/HutangPiutang/Controllers/HutangPiutangController.php',
+        'App\\Modules\\HutangPiutang\\Models\\HutangPiutangModel' => __DIR__ . '/../..' . '/app/Modules/HutangPiutang/Models/HutangPiutangModel.php',
         'App\\Modules\\Transaction\\Controller\\TransactionController' => __DIR__ . '/../..' . '/app/Modules/Transaction/Controller/TransactionController.php',
         'App\\Modules\\Transaction\\Model\\TransactionModel' => __DIR__ . '/../..' . '/app/Modules/Transaction/Model/TransactionModel.php',
         'App\\Modules\\Wallet\\Controller\\WalletController' => __DIR__ . '/../..' . '/app/Modules/Wallet/Controller/WalletController.php',

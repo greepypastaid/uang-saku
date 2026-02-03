@@ -124,6 +124,10 @@
 </head>
 
 <body class="bg-light">
+<?php
+    $request = service('request');
+    $currentPath = preg_replace('#^/index\.php#', '', $request->getUri()->getPath());
+?>
     <!-- Mobile Bar -->
     <div class="mobile-header d-lg-none">
         <div class="brand">

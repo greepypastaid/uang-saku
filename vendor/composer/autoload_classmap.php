@@ -14,6 +14,8 @@ return array(
     'App\\Controllers\\Home' => $baseDir . '/app/Controllers/Home.php',
     'App\\Modules\\Dashboard\\Controller\\DashboardController' => $baseDir . '/app/Modules/Dashboard/Controller/DashboardController.php',
     'App\\Modules\\Home\\Controller\\HomeController' => $baseDir . '/app/Modules/Home/Controller/HomeController.php',
+    'App\\Modules\\HutangPiutang\\Controllers\\HutangPiutangController' => $baseDir . '/app/Modules/HutangPiutang/Controllers/HutangPiutangController.php',
+    'App\\Modules\\HutangPiutang\\Models\\HutangPiutangModel' => $baseDir . '/app/Modules/HutangPiutang/Models/HutangPiutangModel.php',
     'App\\Modules\\Transaction\\Controller\\TransactionController' => $baseDir . '/app/Modules/Transaction/Controller/TransactionController.php',
     'App\\Modules\\Transaction\\Model\\TransactionModel' => $baseDir . '/app/Modules/Transaction/Model/TransactionModel.php',
     'App\\Modules\\Wallet\\Controller\\WalletController' => $baseDir . '/app/Modules/Wallet/Controller/WalletController.php',
