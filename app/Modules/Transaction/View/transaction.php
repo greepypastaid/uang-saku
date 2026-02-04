@@ -46,14 +46,17 @@
                 <form id="form_transaksi">
                     <div class="modal fade" id="transaksiModal" tabindex="-1" aria-labelledby="transaksiModalLabel"
                         aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="transaksiModalLabel">Form Transaksi</h1>
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content border-0 shadow-lg rounded-4">
+                                <div class="modal-header border-0 bg-light rounded-top-4">
+                                    <div>
+                                        <h1 class="modal-title fs-5 fw-bold mb-1" id="transaksiModalLabel">Form Transaksi</h1>
+                                        <small class="text-muted">Catat transaksi baru atau perbarui data</small>
+                                    </div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
+                                <div class="modal-body p-4">
                                     <input type="hidden" name="id_transaksi" id="id_transaksi" value="" />
                                     <div class="mb-3">
                                         <label for="tanggal" class="form-label">Tanggal<sup
@@ -101,12 +104,10 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn"
-                                        style="background-color: #ffffff; color: #000000; border: 1px solid #000000;"
+                                <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
                                         data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn"
-                                        style="background-color: #FFD600; color: #000000; border: none;">Simpan</button>
+                                    <button type="submit" class="btn btn-warning rounded-pill px-4">Simpan</button>
                                 </div>
                             </div>
                         </div>
@@ -141,6 +142,7 @@
                         return json.data || [];
                     }
                 },
+                order: [[1, 'desc']],
                 columns: [
                     {
                         data: null,

@@ -34,13 +34,16 @@
 </div>
 
 <div class="modal fade" id="modalCreate" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <form id="form-create" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Catat Hutang/Piutang</h5>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <form id="form-create" class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 bg-light rounded-top-4">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1">Catat Hutang/Piutang</h5>
+                    <small class="text-muted">Isi detail transaksi dengan lengkap</small>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <div class="alert alert-warning small">
                     <i class="bi bi-exclamation-circle"></i> Saldo Wallet yang dipilih akan otomatis <b>bertambah</b>
                     (jika Hutang) atau <b>berkurang</b> (jika Piutang).
@@ -82,21 +85,24 @@
                     <textarea name="description" class="form-control"></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Simpan & Update Wallet</button>
+            <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                <button type="submit" class="btn btn-warning px-4 rounded-pill">Simpan & Update Wallet</button>
             </div>
         </form>
     </div>
 </div>
 
 <div class="modal fade" id="modalEdit" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <form id="form-edit" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Edit Data</h5>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <form id="form-edit" class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 bg-light rounded-top-4">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1">Edit Data</h5>
+                    <small class="text-muted">Perbarui informasi yang diperlukan</small>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <input type="hidden" name="id" id="edit_id">
                 <div class="mb-3">
                     <label class="form-label">Nama Orang</label>
@@ -111,21 +117,24 @@
                     <textarea name="description" id="edit_description" class="form-control"></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                <button type="submit" class="btn btn-warning px-4 rounded-pill">Simpan Perubahan</button>
             </div>
         </form>
     </div>
 </div>
 
 <div class="modal fade" id="modalPelunasan" tabindex="-1">
-    <div class="modal-dialog">
-        <form id="form-pelunasan" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Lunasi Transaksi?</h5>
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="form-pelunasan" class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 bg-light rounded-top-4">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1">Lunasi Transaksi?</h5>
+                    <small class="text-muted">Pilih wallet untuk pelunasan</small>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <input type="hidden" name="id" id="pelunasan_id">
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle"></i> Saldo Wallet akan otomatis terupdate.
@@ -141,8 +150,8 @@
                     </select>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Konfirmasi Lunas</button>
+            <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                <button type="submit" class="btn btn-success px-4 rounded-pill">Konfirmasi Lunas</button>
             </div>
         </form>
     </div>

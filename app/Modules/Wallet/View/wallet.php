@@ -53,13 +53,16 @@
 
 <form id="form_wallet">
     <div class="modal fade" id="walletModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Form Wallet</h5>
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 bg-light rounded-top-4">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-1">Form Wallet</h5>
+                        <small class="text-muted">Tambah atau perbarui wallet</small>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <input type="hidden" id="id" name="id" value="" />
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama Wallet<sup class="text-danger">*</sup></label>
@@ -70,9 +73,9 @@
                         <input type="number" class="form-control" id="saldo" name="saldo" placeholder="0" required />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4">Simpan</button>
                 </div>
             </div>
         </div>
@@ -81,13 +84,16 @@
 
 <form id="form-transfer">
     <div class="modal fade" id="transferModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Transfer Dana</h5>
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 bg-light rounded-top-4">
+                    <div>
+                        <h5 class="modal-title fw-bold mb-1">Transfer Dana</h5>
+                        <small class="text-muted">Pindahkan saldo antar wallet</small>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="mb-3">
                         <label for="wallet_from" class="form-label">Dari Wallet<sup class="text-danger">*</sup></label>
                         <select class="form-control" id="wallet_from" name="wallet_from" required>
@@ -109,9 +115,9 @@
                         <input type="text" class="form-control" id="note" name="note" />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Transfer</button>
+                <div class="modal-footer border-0 bg-light rounded-bottom-4">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Transfer</button>
                 </div>
             </div>
         </div>

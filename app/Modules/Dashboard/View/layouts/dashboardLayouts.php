@@ -119,6 +119,34 @@
                 display: flex;
             }
         }
+
+        :root {
+            --pagination-active-bg: #FFD600;
+            --pagination-active-text: #000000;
+            --pagination-hover-bg: #FFF3A0;
+            --pagination-border: transparent;
+        }
+
+        .dataTables_wrapper .pagination .page-link {
+            color: #000;
+            border-color: var(--pagination-border);
+        }
+
+        .dataTables_wrapper .pagination .page-link:hover {
+            color: #000;
+            background-color: var(--pagination-hover-bg);
+            border-color: var(--pagination-border);
+        }
+
+        .dataTables_wrapper .pagination .page-item.active .page-link {
+            color: var(--pagination-active-text);
+            background-color: var(--pagination-active-bg);
+            border-color: var(--pagination-active-bg);
+        }
+
+        .dataTables_wrapper .pagination .page-item.disabled .page-link {
+            color: #9CA3AF;
+        }
     </style>
     <?= csrf_meta() ?> </head>
 </head>
