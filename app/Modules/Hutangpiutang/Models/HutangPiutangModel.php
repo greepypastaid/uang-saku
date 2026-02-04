@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\HutangPiutang\Models;
+namespace App\Modules\Hutangpiutang\Models;
 
 use CodeIgniter\Model;
 

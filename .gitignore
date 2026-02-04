@@ -11,6 +11,7 @@
 # Dependencies
 # ----------------------------------------------------------------------
 # Composer dependencies
+/vendor/
 
 # Node.js dependencies (if you decide to use npm/yarn later)
 /node_modules/

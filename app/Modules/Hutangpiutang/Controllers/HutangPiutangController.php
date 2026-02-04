@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Modules\HutangPiutang\Controllers;
+namespace App\Modules\Hutangpiutang\Controllers;
 
 use App\Controllers\BaseController;
-use App\Modules\HutangPiutang\Models\HutangPiutangModel;
+use App\Modules\Hutangpiutang\Models\HutangPiutangModel;
 use App\Modules\Transaction\Model\TransactionModel;
 use App\Modules\Wallet\Model\WalletModel;
 
@@ -24,7 +24,7 @@ class HutangPiutangController extends BaseController
     {
         $userId = auth()->id();
         $wallets = $this->walletModel->where('user_id', $userId)->findAll();
-        return view('../Modules/HutangPiutang/Views/hutangpiutang', ['wallets' => $wallets]);
+        return view('../Modules/Hutangpiutang/Views/hutangpiutang', ['wallets' => $wallets]);
     }
 
     public function list()

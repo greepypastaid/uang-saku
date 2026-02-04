@@ -1,6 +1,6 @@
 <?php
 
-$routes->group('hutangpiutang', ['namespace' => 'App\Modules\HutangPiutang\Controllers', 'filter' => 'auth'], function ($routes) {
+$routes->group('hutangpiutang', ['namespace' => 'App\Modules\Hutangpiutang\Controllers', 'filter' => 'auth'], function ($routes) {
 	$routes->get('/', 'HutangPiutangController::index');
 	$routes->get('list', 'HutangPiutangController::list');
 	$routes->post('create', 'HutangPiutangController::create');
