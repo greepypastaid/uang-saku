@@ -25,6 +25,10 @@ $currentPath = preg_replace('#^/index\.php#', '', $request->getUri()->getPath())
             class="bi bi-arrow-left-right me-2"></i>Transactions</a>
       </li>
       <li class="nav-item w-100">
+        <a class="nav-link text-secondary<?= $currentPath === '/budget' ? ' fw-bold text-black' : '' ?>"
+          href="<?= base_url('/budget') ?>" style="font-size: 1.2em;"><i class="bi bi-calculator me-2"></i>Budget Limitator</a>
+      </li>
+      <li class="nav-item w-100">
         <a class="nav-link text-secondary<?= $currentPath === '/hutangpiutang' ? ' fw-bold text-black' : '' ?>"
           href="<?= base_url('/hutangpiutang') ?>" style="font-size: 1.2em;"><i
             class="bi bi-credit-card-2-front me-2"></i>Hutang & Piutang</a>

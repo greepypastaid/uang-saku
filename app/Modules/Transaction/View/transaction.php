@@ -83,10 +83,28 @@
                                             <option value="Makanan">Makanan</option>
                                             <option value="Transportasi">Transportasi</option>
                                             <option value="Hiburan">Hiburan</option>
+                                            <option value="Belanja">Belanja</option>
+                                            <option value="Kesehatan">Kesehatan</option>
+                                            <option value="Pendidikan">Pendidikan</option>
+                                            <option value="Tagihan">Tagihan</option>
                                             <option value="Pemasukkan">Pemasukkan</option>
                                             <option value="Lainnya">Lainnya</option>
                                         </select>
                                     </div>
+                                    
+                                    <!-- Budget Info Alert -->
+                                    <div id="budget-info-container" style="display: none;">
+                                        <div class="alert mb-3" id="budget-info-alert" role="alert">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <i class="bi bi-calculator me-2"></i>
+                                                <strong>Budget Limitator</strong>
+                                            </div>
+                                            <div id="budget-info-content">
+                                                <!-- Budget info will be inserted here -->
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="mb-3">
                                         <label for="type" class="form-label">Tipe Transaksi<sup
                                                 class="text-danger">*</sup></label>
@@ -196,7 +214,75 @@
             $('#btn-tambah').click(function () {
                 $('#form_transaksi')[0].reset();
                 $('#id_transaksi').val('');
+                $('#budget-info-container').hide();
                 $('#transaksiModal').modal('show');
+            });
+
+            // Load budget info when category or date changes
+            function loadBudgetInfo() {
+                const category = $('#kategori').val();
+                const date = $('#tanggal').val() || new Date().toISOString().split('T')[0];
+                const type = $('#type').val();
+
+                if (!category || type !== 'expense') {
+                    $('#budget-info-container').hide();
+                    return;
+                }
+
+                $.ajax({
+                    url: '<?= base_url("budget/info") ?>',
+                    type: 'GET',
+                    data: { category: category, date: date },
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.status && res.has_budget) {
+                            const data = res.data;
+                            let alertClass = 'alert-info';
+                            let statusIcon = 'bi-info-circle';
+                            
+                            if (data.percentage >= 100) {
+                                alertClass = 'alert-danger';
+                                statusIcon = 'bi-exclamation-triangle';
+                            } else if (data.percentage >= 80) {
+                                alertClass = 'alert-warning';
+                                statusIcon = 'bi-exclamation-circle';
+                            } else if (data.percentage >= 50) {
+                                alertClass = 'alert-warning';
+                                statusIcon = 'bi-exclamation-circle';
+                            } else {
+                                alertClass = 'alert-success';
+                                statusIcon = 'bi-check-circle';
+                            }
+
+                            $('#budget-info-alert').removeClass('alert-info alert-success alert-warning alert-danger')
+                                                   .addClass(alertClass);
+                            
+                            let content = `
+                                <small>
+                                    <div class="mb-1"><strong>Limit Budget:</strong> Rp ${data.formatted.budget_limit}</div>
+                                    <div class="mb-1"><strong>Sudah Terpakai:</strong> Rp ${data.formatted.current_spent} (${data.percentage}%)</div>
+                                    <div><strong>Sisa:</strong> Rp ${data.formatted.remaining}</div>
+                                </small>
+                            `;
+                            
+                            if (data.remaining <= 0) {
+                                content += '<small class="text-danger"><br><i class="bi bi-exclamation-triangle me-1"></i>Budget sudah habis!</small>';
+                            }
+                            
+                            $('#budget-info-content').html(content);
+                            $('#budget-info-container').slideDown();
+                        } else {
+                            $('#budget-info-container').slideUp();
+                        }
+                    },
+                    error: function() {
+                        $('#budget-info-container').hide();
+                    }
+                });
+            }
+
+            $('#kategori, #tanggal, #type').on('change', function() {
+                loadBudgetInfo();
             });
 
             $('#form_transaksi').submit(function (e) {
@@ -293,6 +379,7 @@
                         if (response.status) {
                             let data = response.data;
                             $('#form_transaksi')[0].reset();
+                            $('#budget-info-container').hide();
                             $('#id_transaksi').val(data.id);
                             $('#tanggal').val(data.tanggal);
                             $('#nama_transaksi').val(data.nama_transaksi);
@@ -301,6 +388,11 @@
                             $('#type').val(data.type);
                             $('#wallet_id').val(data.wallet_id);
                             $('#transaksiModal').modal('show');
+                            
+                            // Load budget info after setting values
+                            setTimeout(function() {
+                                loadBudgetInfo();
+                            }, 100);
                         } else {
                             Swal.fire('Gagal', response.message || 'Gagal ambil data', 'error');
                         }

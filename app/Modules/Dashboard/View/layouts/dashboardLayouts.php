@@ -188,6 +188,10 @@
                         <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/transaction' ? ' fw-bold text-black' : '' ?>"
                             href="<?= base_url('/transaction') ?>">Transactions</a>
                     </li>
+                     <li class="nav-item w-100">
+                        <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/budget' ? ' fw-bold text-black' : '' ?>"
+                            href="<?= base_url('/budget') ?>">Budget Limitator</a>
+                    </li>
                     <li class="nav-item w-100">
                         <a class="nav-link text-secondary<?= preg_replace('#^/index\.php#', '', service('request')->getUri()->getPath()) === '/hutangpiutang' ? ' fw-bold text-black' : '' ?>"
                             href="<?= base_url('/hutangpiutang') ?>">Hutang & Piutang</a>

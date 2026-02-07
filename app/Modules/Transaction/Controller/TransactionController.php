@@ -5,16 +5,19 @@ namespace App\Modules\Transaction\Controller;
 use App\Controllers\BaseController;
 use App\Modules\Transaction\Model\TransactionModel;
 use App\Modules\Wallet\Model\WalletModel;
+use App\Modules\Budget\Model\BudgetModel;
 
 class TransactionController extends BaseController
 {
     protected $transactionModel;
     protected $walletModel;
+    protected $budgetModel;
 
     public function __construct()
     {
         $this->transactionModel = new TransactionModel();
         $this->walletModel = new WalletModel();
+        $this->budgetModel = new BudgetModel();
     }
 
     public function adjustWalletSaldo(int $walletId, float $amount)
@@ -52,6 +55,24 @@ class TransactionController extends BaseController
 
         if (!$this->transactionModel->validate($arrayTransaksi)) {
             return $this->response->setJSON(['status' => false, 'message' => 'Validasi gagal.', 'errors' => $this->transactionModel->errors()]);
+        }
+
+        // Check budget limit for expense transactions
+        if ($arrayTransaksi['type'] === 'expense') {
+            $budgetCheck = $this->checkBudgetLimit(
+                $userId,
+                $arrayTransaksi['kategori'],
+                $arrayTransaksi['tanggal'],
+                (float) $arrayTransaksi['harga']
+            );
+            
+            if (!$budgetCheck['allowed']) {
+                return $this->response->setJSON([
+                    'status' => false,
+                    'message' => $budgetCheck['message'],
+                    'budget_warning' => true
+                ]);
+            }
         }
 
         $insertId = $this->transactionModel->createTransaction($arrayTransaksi);
@@ -224,6 +245,25 @@ class TransactionController extends BaseController
             return $this->response->setJSON(['status' => false, 'message' => 'Validasi gagal.', 'errors' => $this->transactionModel->errors()]);
         }
 
+        // Check budget limit for expense transactions
+        if ($arrayTransaksi['type'] === 'expense') {
+            $budgetCheck = $this->checkBudgetLimit(
+                $userId,
+                $arrayTransaksi['kategori'],
+                $arrayTransaksi['tanggal'],
+                (float) $arrayTransaksi['harga'],
+                $data['id'] // exclude current transaction from calculation
+            );
+            
+            if (!$budgetCheck['allowed']) {
+                return $this->response->setJSON([
+                    'status' => false,
+                    'message' => $budgetCheck['message'],
+                    'budget_warning' => true
+                ]);
+            }
+        }
+
         $updated = $this->transactionModel->updateTransaction($data['id'], $arrayTransaksi);
 
         if ($updated && !empty($arrayTransaksi['wallet_id'])) {
@@ -232,5 +272,62 @@ class TransactionController extends BaseController
         }
 
         return $this->response->setJSON(['status' => true, 'message' => 'Berhasil Memperbarui data transaksi.']);
+    }
+
+    private function checkBudgetLimit($userId, $kategori, $tanggal, $amount, $excludeTransactionId = null)
+    {
+        $date = new \DateTime($tanggal);
+        $month = (int) $date->format('n');
+        $year = (int) $date->format('Y');
+
+        // Get budget for this category and month
+        $budget = $this->budgetModel
+            ->where('user_id', $userId)
+            ->where('category', $kategori)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->first();
+
+        if (!$budget) {
+            // No budget set, allow transaction
+            return ['allowed' => true];
+        }
+
+        // Calculate current spending for this category in this month
+        $db = \Config\Database::connect();
+        $builder = $db->table('transaksi');
+        $builder->select('SUM(harga) as total_spent');
+        $builder->where('user_id', $userId);
+        $builder->where('kategori', $kategori);
+        $builder->where('type', 'expense');
+        $builder->where('MONTH(tanggal)', $month);
+        $builder->where('YEAR(tanggal)', $year);
+        
+        if ($excludeTransactionId) {
+            $builder->where('id !=', $excludeTransactionId);
+        }
+        
+        $result = $builder->get()->getRowArray();
+        $currentSpent = (float) ($result['total_spent'] ?? 0);
+        
+        $newTotal = $currentSpent + $amount;
+        $budgetLimit = (float) $budget['amount'];
+        
+        if ($newTotal > $budgetLimit) {
+            $remaining = $budgetLimit - $currentSpent;
+            return [
+                'allowed' => false,
+                'message' => sprintf(
+                    'Budget untuk kategori "%s" di bulan ini adalah Rp %s. Anda sudah menghabiskan Rp %s. Transaksi ini (Rp %s) akan melebihi budget. Sisa budget: Rp %s',
+                    $kategori,
+                    number_format($budgetLimit, 0, ',', '.'),
+                    number_format($currentSpent, 0, ',', '.'),
+                    number_format($amount, 0, ',', '.'),
+                    number_format(max(0, $remaining), 0, ',', '.')
+                )
+            ];
+        }
+
+        return ['allowed' => true];
     }
 }
