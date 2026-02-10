@@ -1,60 +1,73 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
-<!-- Dummy bikinan AI -->
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-            <h1 class="display-4 fw-bold mb-4">Mengapa Memilih Uang Saku?</h1>
-            <p class="lead text-muted mb-5">
-                Uang Saku adalah solusi finance tracker yang membantu Anda mencapai tujuan keuangan dengan fitur-fitur canggih dan antarmuka yang ramah pengguna.
-            </p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">Mengapa Memilih Uang Saku?</h1>
+        <p class="text-xl text-gray-500 leading-relaxed">
+            Uang Saku adalah solusi finance tracker yang membantu Anda mencapai tujuan keuangan dengan fitur-fitur canggih and antarmuka yang ramah pengguna.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        <!-- Feature 1 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-start">
+                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 flex-shrink-0 mr-6">
+                    <i class="bi bi-cash-stack text-2xl"></i>
+                </div>
+                <div>
+                    <h5 class="text-xl font-bold text-gray-900 mb-2">Pelacakan Otomatis</h5>
+                    <p class="text-gray-500 leading-relaxed">Otomatisasi pelacakan transaksi untuk menghemat waktu and mengurangi kesalahan manual.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-start">
+                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 flex-shrink-0 mr-6">
+                    <i class="bi bi-bar-chart-line text-2xl"></i>
+                </div>
+                <div>
+                    <h5 class="text-xl font-bold text-gray-900 mb-2">Laporan Detail</h5>
+                    <p class="text-gray-500 leading-relaxed">Dapatkan insight mendalam dengan laporan keuangan yang visual and mudah dipahami.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-start">
+                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 flex-shrink-0 mr-6">
+                    <i class="bi bi-lock-fill text-2xl"></i>
+                </div>
+                <div>
+                    <h5 class="text-xl font-bold text-gray-900 mb-2">Privasi & Keamanan</h5>
+                    <p class="text-gray-500 leading-relaxed">Data Anda dilindungi dengan teknologi enkripsi terdepan, sehingga aman dari ancaman.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-start">
+                <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-600 flex-shrink-0 mr-6">
+                    <i class="bi bi-phone text-2xl"></i>
+                </div>
+                <div>
+                    <h5 class="text-xl font-bold text-gray-900 mb-2">Akses Dimana Saja</h5>
+                    <p class="text-gray-500 leading-relaxed">Kelola keuangan Anda dari perangkat apa saja, kapan saja, dengan aplikasi mobile-friendly.</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row g-4">
-        <div class="col-md-6">
-            <!-- <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <i class="bi bi-cash-stack fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Pelacakan Otomatis</h5>
-                    <p class="card-text text-muted">Otomatisasi pelacakan transaksi untuk menghemat waktu dan mengurangi kesalahan manual.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <i class="bi bi-bar-chart-line fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Laporan Detail</h5>
-                    <p class="card-text text-muted">Dapatkan insight mendalam dengan laporan keuangan yang visual dan mudah dipahami.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <i class="bi bi-lock-fill fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Privasi & Keamanan</h5>
-                    <p class="card-text text-muted">Data Anda dilindungi dengan teknologi enkripsi terdepan, sehingga aman dari ancaman.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <i class="bi bi-phone fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Akses Dimana Saja</h5>
-                    <p class="card-text text-muted">Kelola keuangan Anda dari perangkat apa saja, kapan saja, dengan aplikasi mobile-friendly.</p>
-                </div>
-            </div>
-        </div> -->
-    </div>
-    <div class="row justify-content-center mt-5">
-        <div class="col-lg-6 text-center">
-            <a href="/dashboard" class="btn btn-lg rounded-pill px-4 py-3 fw-bold" style="background-color: #FFD600; color: #000000; border: none;">
-                Coba Gratis Sekarang
-            </a>
-        </div>
+
+    <div class="mt-20 text-center">
+        <a href="/dashboard" class="inline-flex items-center px-8 py-4 bg-primary hover:bg-yellow-400 text-black font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+            Coba Gratis Sekarang
+            <i class="bi bi-arrow-right ml-2 text-xl"></i>
+        </a>
     </div>
 </div>
 <?= $this->endSection() ?>

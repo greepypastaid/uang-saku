@@ -1,162 +1,205 @@
 <?= $this->extend('../Modules/Dashboard/View/layouts/dashboardLayouts') ?>
 
 <?= $this->section('content') ?>
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
         <div>
-            <h1 class="fw-bold">Hutang & Piutang</h1>
-            <p class="text-muted mb-0">Bayar Hutangmu dan jangan lupa tagihilah karena itu hakmu!</p>
+            <h1 class="text-2xl font-black text-gray-900 mb-1">Hutang & Piutang</h1>
+            <p class="text-xs text-gray-500 font-medium">Bayar Hutangmu and tagihlah hakmu tepat waktu!</p>
         </div>
-        <button class="btn btn-warning px-4 rounded-5" style="background-color: #FFD600; color: #000000;"
-            onclick="openCreateModal()">
-            <i class="bi bi-plus-lg"></i> Catat Baru
-        </button>
-    </div>
-
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle" id="table-HutangPiutang">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Tipe</th>
-                            <th>Nama Orang</th>
-                            <th class="text-end">Jumlah</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-end">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+        <div class="w-full md:w-auto">
+            <button onclick="openCreateModal()" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-primary hover:bg-yellow-400 text-black font-bold rounded-2xl shadow-sm hover:shadow-md transition-all border-2 border-primary/20 hover:border-primary">
+                <i data-lucide="plus" class="mr-2 w-5 h-5"></i> Catat Baru
+            </button>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="modalCreate" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form id="form-create" class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 bg-light rounded-top-4">
-                <div>
-                    <h5 class="modal-title fw-bold mb-1">Catat Hutang/Piutang</h5>
-                    <small class="text-muted">Isi detail transaksi dengan lengkap</small>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="alert alert-warning small">
-                    <i class="bi bi-exclamation-circle"></i> Saldo Wallet yang dipilih akan otomatis <b>bertambah</b>
-                    (jika Hutang) atau <b>berkurang</b> (jika Piutang).
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Tipe Transaksi</label>
-                    <select name="type" class="form-select" required>
-                        <option value="hutang">Hutang (Saya Pinjam Uang)</option>
-                        <option value="piutang">Piutang (Saya Pinjamkan Uang)</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Pilih Wallet (Sumber/Tujuan Dana)</label>
-                    <select name="wallet_id" class="form-select" required>
-                        <option value="">-- Pilih Wallet --</option>
-                        <?php foreach ($wallets as $w): ?>
-                            <option value="<?= $w['id'] ?>"><?= $w['nama'] ?> (Rp <?= number_format($w['saldo']) ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Nama Orang</label>
-                    <input type="text" name="person_name" class="form-control" required placeholder="Contoh: Budi">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Jumlah (Rp)</label>
-                    <input type="number" name="amount" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Jatuh Tempo</label>
-                    <input type="date" name="due_date" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Catatan</label>
-                    <textarea name="description" class="form-control"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer border-0 bg-light rounded-bottom-4">
-                <button type="submit" class="btn btn-warning px-4 rounded-pill">Simpan & Update Wallet</button>
-            </div>
-        </form>
+    <!-- Table Card -->
+    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left" id="table-HutangPiutang">
+                <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                    <tr>
+                        <th class="px-6 py-4 rounded-l-xl">Tipe</th>
+                        <th class="px-6 py-4">Nama Orang</th>
+                        <th class="px-6 py-4 text-right">Jumlah</th>
+                        <th class="px-6 py-4 text-center">Status</th>
+                        <th class="px-6 py-4 text-right rounded-r-xl">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    <!-- DataTables magic -->
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalEdit" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <form id="form-edit" class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 bg-light rounded-top-4">
-                <div>
-                    <h5 class="modal-title fw-bold mb-1">Edit Data</h5>
-                    <small class="text-muted">Perbarui informasi yang diperlukan</small>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <input type="hidden" name="id" id="edit_id">
-                <div class="mb-3">
-                    <label class="form-label">Nama Orang</label>
-                    <input type="text" name="person_name" id="edit_person_name" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Jumlah (Rp)</label>
-                    <input type="number" name="amount" id="edit_amount" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Catatan</label>
-                    <textarea name="description" id="edit_description" class="form-control"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer border-0 bg-light rounded-bottom-4">
-                <button type="submit" class="btn btn-warning px-4 rounded-pill">Simpan Perubahan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="modal fade" id="modalPelunasan" tabindex="-1">
+<!-- Modal Create -->
+<div class="modal fade" id="modalCreate" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <form id="form-pelunasan" class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-0 bg-light rounded-top-4">
+        <div class="modal-content overflow-hidden border-0 shadow-2xl rounded-3xl">
+            <div class="p-6 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
                 <div>
-                    <h5 class="modal-title fw-bold mb-1">Lunasi Transaksi?</h5>
-                    <small class="text-muted">Pilih wallet untuk pelunasan</small>
+                    <h1 class="text-xl font-extrabold text-gray-900">Catat Hutang/Piutang</h1>
+                    <p class="text-xs text-gray-400">Isi detail transaksi dengan lengkap</p>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" data-bs-dismiss="modal">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
-            <div class="modal-body p-4">
-                <input type="hidden" name="id" id="pelunasan_id">
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i> Saldo Wallet akan otomatis terupdate.
+
+            <form id="form-create">
+                <div class="p-8 space-y-4">
+                    <div class="bg-yellow-50 border border-yellow-100 rounded-2xl p-4 flex items-start">
+                        <i data-lucide="alert-circle" class="text-yellow-600 mr-2 mt-0.5 w-4 h-4"></i>
+                        <p class="text-[10px] text-yellow-700 uppercase font-bold leading-tight">
+                            Saldo dompet yang dipilih akan otomatis <span class="text-black">bertambah</span> (Hutang) atau <span class="text-black">berkurang</span> (Piutang).
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Tipe Transaksi</label>
+                        <select name="type" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all cursor-pointer">
+                            <option value="hutang">Hutang (Saya Pinjam Uang)</option>
+                            <option value="piutang">Piutang (Saya Pinjamkan Uang)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Pilih Wallet</label>
+                        <select name="wallet_id" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all cursor-pointer">
+                            <option value="">-- Pilih Wallet --</option>
+                            <?php foreach ($wallets as $w): ?>
+                                <option value="<?= $w['id'] ?>"><?= $w['nama'] ?> (Rp <?= number_format($w['saldo']) ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nama Orang</label>
+                        <input type="text" name="person_name" required placeholder="Contoh: Budi" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Jumlah (Rp)</label>
+                            <input type="number" name="amount" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Jatuh Tempo</label>
+                            <input type="date" name="due_date" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Catatan</label>
+                        <textarea name="description" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all" rows="2"></textarea>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Pilih Wallet untuk Pelunasan</label>
-                    <select name="wallet_id" class="form-select" required>
-                        <option value="">-- Pilih Wallet --</option>
-                        <?php foreach ($wallets as $w): ?>
-                            <option value="<?= $w['id'] ?>"><?= $w['nama'] ?> (Rp <?= number_format($w['saldo']) ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+
+                <div class="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                    <button type="button" class="px-6 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-full transition-colors" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-8 py-2 bg-primary hover:bg-yellow-400 text-black font-bold rounded-full shadow-sm hover:shadow-md transition-all">
+                        Simpan & Update Wallet
+                    </button>
                 </div>
-            </div>
-            <div class="modal-footer border-0 bg-light rounded-bottom-4">
-                <button type="submit" class="btn btn-success px-4 rounded-pill">Konfirmasi Lunas</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
+<!-- Modal Edit -->
+<div class="modal fade" id="modalEdit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden border-0 shadow-2xl rounded-3xl">
+            <div class="p-6 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-extrabold text-gray-900">Edit Data</h1>
+                    <p class="text-xs text-gray-400">Perbarui informasi yang diperlukan</p>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" data-bs-dismiss="modal">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="form-edit">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="p-8 space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nama Orang</label>
+                        <input type="text" name="person_name" id="edit_person_name" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Jumlah (Rp)</label>
+                        <input type="number" name="amount" id="edit_amount" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Catatan</label>
+                        <textarea name="description" id="edit_description" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                    <button type="button" class="px-6 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-full transition-colors" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-8 py-2 bg-primary hover:bg-yellow-400 text-black font-bold rounded-full shadow-sm hover:shadow-md transition-all">
+                        Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pelunasan -->
+<div class="modal fade" id="modalPelunasan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden border-0 shadow-2xl rounded-3xl">
+            <div class="p-6 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-extrabold text-gray-900">Lunasi Transaksi?</h1>
+                    <p class="text-xs text-gray-400">Pilih wallet untuk pelunasan</p>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" data-bs-dismiss="modal">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="form-pelunasan">
+                <input type="hidden" name="id" id="pelunasan_id">
+                <div class="p-8 space-y-4">
+                    <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex items-start">
+                        <i data-lucide="info" class="text-blue-600 mr-2 mt-0.5 w-4 h-4"></i>
+                        <p class="text-xs text-blue-700 font-bold italic">Saldo dompet akan otomatis terupdate setelah konfirmasi.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Pilih Wallet untuk Pelunasan</label>
+                        <select name="wallet_id" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all cursor-pointer">
+                            <option value="">-- Pilih Wallet --</option>
+                            <?php foreach ($wallets as $w): ?>
+                                <option value="<?= $w['id'] ?>"><?= $w['nama'] ?> (Rp <?= number_format($w['saldo']) ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                    <button type="button" class="px-6 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-full transition-colors" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-8 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-full shadow-sm hover:shadow-md transition-all">
+                        Konfirmasi Lunas
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
@@ -164,105 +207,101 @@
     var baseUrl = '<?= base_url("hutangpiutang") ?>';
     var table;
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $(document).ready(function () {
-
+    $(document).ready(function() {
         table = $('#table-HutangPiutang').DataTable({
             serverSide: true,
             processing: true,
             ajax: `${baseUrl}/list`,
-            columns: [
-                {
+            columns: [{
                     data: 'type',
-                    render: function (data) {
-                        return data === 'hutang'
-                            ? '<span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">Hutang</span>'
-                            : '<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">Piutang</span>';
+                    className: 'px-6 py-4',
+                    render: function(data) {
+                        const colorClass = data === 'hutang' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-green-600 border-green-100';
+                        return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${colorClass}">${data.toUpperCase()}</span>`;
                     }
                 },
-                { data: 'person_name' },
                 {
-                    data: 'amount', className: 'text-end fw-bold',
+                    data: 'person_name',
+                    className: 'px-6 py-4 font-bold text-gray-900'
+                },
+                {
+                    data: 'amount',
+                    className: 'px-6 py-4 text-right font-black text-gray-900',
                     render: (data) => 'Rp ' + parseFloat(data).toLocaleString('id-ID')
                 },
                 {
-                    data: 'status', className: 'text-center',
-                    render: function (data) {
-                        return data === 'paid'
-                            ? '<span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">Lunas</span>'
-                            : '<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-2">Belum Lunas</span>';
+                    data: 'status',
+                    className: 'px-6 py-4 text-center',
+                    render: function(data) {
+                        const colorClass = data === 'paid' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-gray-100 text-gray-400 border-gray-200';
+                        const label = data === 'paid' ? 'LUNAS' : 'BELUM LUNAS';
+                        return `<span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black border ${colorClass}">${label}</span>`;
                     }
                 },
                 {
-                    data: null, className: 'text-end',
-                    render: function (data) {
+                    data: null,
+                    className: 'px-6 py-4 text-right',
+                    render: function(data) {
                         let btnPelunasan = '';
-
                         if (data.status !== 'paid') {
                             btnPelunasan = `
-                <button class="btn badge rounded-pill bg-success-subtle text-success border-0 me-1 px-3 py-2" onclick="openPelunasanModal(${data.id})" title="Tandai Lunas">
-                    <i class="bi bi-check-circle-fill me-1"></i> Lunas
-                </button>`;
+                                <button class="px-3 py-1 text-xs bg-green-50 text-green-600 border border-green-200 rounded-full font-bold hover:bg-green-600 hover:text-white transition-all mr-2" onclick="openPelunasanModal(${data.id})">
+                                    <i data-lucide="check-circle" class="mr-1 w-3 h-3"></i> LU-NA-SI
+                                </button>`;
                         } else {
-                            btnPelunasan = `<span class="badge rounded-pill bg-light text-secondary border px-3 py-2 me-2"><i class="bi bi-check2-all"></i> Selesai</span>`;
+                            btnPelunasan = `<span class="text-xs text-gray-400 font-bold mr-2 italic flex items-center"><i data-lucide="check-circle" class="mr-1 w-3 h-3"></i>Selesai</span>`;
                         }
 
                         return `
-            ${btnPelunasan}
-            
-            <button class="btn badge rounded-pill bg-warning-subtle text-warning-emphasis border-0 me-1 px-3 py-2" onclick="openEditModal(${data.id})" title="Edit">
-                <i class="bi bi-pencil-square"></i>
-            </button>
-            
-            <button class="btn badge rounded-pill bg-danger-subtle text-danger border-0 px-3 py-2" onclick="deleteHutangPiutang(${data.id})" title="Hapus">
-                <i class="bi bi-trash"></i>
-            </button>`;
+                            <div class="flex items-center justify-end">
+                                ${btnPelunasan}
+                                <button class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" onclick="openEditModal(${data.id})" title="Edit">
+                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                </button>
+                                <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors ml-1" onclick="deleteHutangPiutang(${data.id})" title="Hapus">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>`;
                     }
                 }
-            ]
+            ],
+            pageLength: 10
         });
 
-        // Submit Create
-        $('#form-create').submit(function (e) {
+        // AJAX handlers (unchanged logic, just IDs)
+        $('#form-create').submit(function(e) {
             e.preventDefault();
-            $.post(`${baseUrl}/create`, $(this).serialize(), function (res) {
+            $.post(`${baseUrl}/create`, $(this).serialize(), function(res) {
                 if (res.status) {
                     $('#modalCreate').modal('hide');
                     table.ajax.reload();
-                    Swal.fire('Sukses', res.message, 'success');
+                    showAlert('success', 'Berhasil', res.message);
                 } else {
-                    Swal.fire('Gagal', res.message, 'error');
+                    showAlert('error', 'Gagal', res.message);
                 }
             }, 'json');
         });
 
-        // Submit Edit
-        $('#form-edit').submit(function (e) {
+        $('#form-edit').submit(function(e) {
             e.preventDefault();
-            $.post(`${baseUrl}/update`, $(this).serialize(), function (res) {
+            $.post(`${baseUrl}/update`, $(this).serialize(), function(res) {
                 if (res.status) {
                     $('#modalEdit').modal('hide');
                     table.ajax.reload();
-                    Swal.fire('Sukses', res.message, 'success');
+                    showAlert('success', 'Berhasil', res.message);
                 }
             }, 'json');
         });
 
-        // Submit Pelunasan
-        $('#form-pelunasan').submit(function (e) {
+        $('#form-pelunasan').submit(function(e) {
             e.preventDefault();
-            $.post(`${baseUrl}/pelunasan`, $(this).serialize(), function (res) {
+            $.post(`${baseUrl}/pelunasan`, $(this).serialize(), function(res) {
                 if (res.status) {
                     $('#modalPelunasan').modal('hide');
                     table.ajax.reload();
-                    Swal.fire('Lunas!', res.message, 'success');
+                    showAlert('success', 'Berhasil Lunas', res.message);
                 } else {
-                    Swal.fire('Gagal', res.message, 'error');
+                    showAlert('error', 'Gagal', res.message);
                 }
             }, 'json');
         });
@@ -279,7 +318,7 @@
     }
 
     function openEditModal(id) {
-        $.get(`${baseUrl}/read?id=${id}`, function (res) {
+        $.get(`${baseUrl}/read?id=${id}`, function(res) {
             if (res.status) {
                 let d = res.data;
                 $('#edit_id').val(d.id);
@@ -288,7 +327,7 @@
                 $('#edit_description').val(d.description);
                 $('#modalEdit').modal('show');
             } else {
-                Swal.fire('Error', res.message, 'error');
+                showAlert('error', 'Error', res.message);
             }
         });
     }
@@ -299,13 +338,15 @@
             text: 'Data akan dihapus permanen.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#d33',
+            confirmButtonColor: '#ef4444',
             confirmButtonText: 'Ya, Hapus'
         }).then((result) => {
             if (result.isConfirmed) {
-                $.post(`${baseUrl}/delete`, { id: id }, function (res) {
+                $.post(`${baseUrl}/delete`, {
+                    id: id
+                }, function(res) {
                     table.ajax.reload();
-                    Swal.fire('Terhapus', res.message, 'success');
+                    showAlert('success', 'Terhapus', res.message);
                 });
             }
         });

@@ -1,51 +1,51 @@
 <?= $this->extend('layouts/main') ?>
 
 <?= $this->section('content') ?>
-<!-- Dummy bikinan AI -->
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 text-center">
-            <h1 class="display-4 fw-bold mb-4">Tentang Uang Saku</h1>
-            <p class="lead text-muted mb-5">
-                Uang Saku adalah aplikasi finance tracker yang dirancang untuk membantu Anda mengelola keuangan pribadi dengan mudah dan efisien. Dari pelacakan pengeluaran hingga perencanaan anggaran, kami hadir untuk membuat hidup finansial Anda lebih terorganisir.
-            </p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+    <!-- Header Section -->
+    <div class="text-center max-w-3xl mx-auto mb-16">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">Tentang Uang Saku</h1>
+        <p class="text-xl text-gray-500 leading-relaxed">
+            Uang Saku adalah aplikasi finance tracker yang dirancang untuk membantu Anda mengelola keuangan pribadi dengan mudah dan efisien. Dari pelacakan pengeluaran hingga perencanaan anggaran, kami hadir untuk membuat hidup finansial Anda lebih terorganisir.
+        </p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+            <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-500 mb-6 group-hover:bg-yellow-200 transition-colors">
+                <i class="bi bi-graph-up text-3xl"></i>
+            </div>
+            <h5 class="text-xl font-bold text-gray-900 mb-3">Pelacakan Real-Time</h5>
+            <p class="text-gray-500">Pantau pengeluaran dan pemasukan Anda secara real-time dengan laporan yang akurat.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+            <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-500 mb-6">
+                <i class="bi bi-shield-check text-3xl"></i>
+            </div>
+            <h5 class="text-xl font-bold text-gray-900 mb-3">Keamanan Terjamin</h5>
+            <p class="text-gray-500">Data keuangan Anda aman dengan enkripsi tingkat tinggi dan autentikasi yang ketat.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center">
+            <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center text-yellow-500 mb-6">
+                <i class="bi bi-lightning-charge text-3xl"></i>
+            </div>
+            <h5 class="text-xl font-bold text-gray-900 mb-3">Mudah Digunakan</h5>
+            <p class="text-gray-500">Interface yang intuitif memungkinkan Anda mengelola keuangan tanpa kesulitan.</p>
         </div>
     </div>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-graph-up fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Pelacakan Real-Time</h5>
-                    <p class="card-text text-muted">Pantau pengeluaran dan pemasukan Anda secara real-time dengan laporan yang akurat.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-shield-check fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Keamanan Terjamin</h5>
-                    <p class="card-text text-muted">Data keuangan Anda aman dengan enkripsi tingkat tinggi dan autentikasi yang ketat.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <i class="bi bi-lightning-charge fs-1 text-warning mb-3"></i>
-                    <h5 class="card-title">Mudah Digunakan</h5>
-                    <p class="card-text text-muted">Interface yang intuitif memungkinkan Anda mengelola keuangan tanpa kesulitan.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row justify-content-center mt-5">
-        <div class="col-lg-6 text-center">
-            <a href="/dashboard" class="btn btn-lg rounded-pill px-4 py-3 fw-bold" style="background-color: #FFD600; color: #000000; border: none;">
-                Mulai Sekarang
-            </a>
-        </div>
+
+    <!-- CTA Section -->
+    <div class="mt-20 text-center">
+        <a href="/dashboard" class="inline-flex items-center px-8 py-4 bg-primary hover:bg-yellow-400 text-black font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+            Mulai Sekarang
+            <i class="bi bi-arrow-right ml-2 text-xl"></i>
+        </a>
     </div>
 </div>
 <?= $this->endSection() ?>

@@ -1,8 +1,10 @@
-<footer class="bg-white border-top py-3 mt-4 text-center text-secondary small w-100">
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center flex-column flex-md-row">
-            <div>&copy; <?= date('Y') ?> Uang Saku</div>
-            <div class="small text-muted">Made with ♥</div>
+<footer class="bg-white border-t py-6 mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div class="text-gray-500 text-sm">&copy; <?= date('Y') ?> Uang Saku. All rights reserved.</div>
+            <div class="text-gray-400 text-xs flex items-center">
+                Made with <i class="bi bi-heart-fill text-red-500 mx-1"></i> in Indonesia
+            </div>
         </div>
     </div>
 </footer>

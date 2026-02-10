@@ -1,47 +1,32 @@
 <?= $this->extend('../Modules/Dashboard/View/layouts/dashboardLayouts') ?>
 
 <?= $this->section('content') ?>
-<style>
-    /* Styling khusus untuk Log agar lebih enak dilihat */
-    #table-log tbody tr td {
-        vertical-align: middle;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-    .amount-text {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-    }
-</style>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div>
+            <h1 class="text-2xl font-black text-gray-900 mb-1">Log Mutasi Rekening</h1>
+            <p class="text-xs text-gray-500 font-medium">Riwayat lengkap semua aliran dana masuk and keluar.</p>
+        </div>
+    </div>
 
-<div class="container mt-4">
-    <div class="">
-        <h1 class="fw-bold">Log Mutasi Rekening</h1>
-        <div class="page-header">
-            <div class="page-header-text">
-                <p class="mb-0 text-muted">Riwayat lengkap semua aliran dana masuk dan keluar (termasuk hutang & piutang).</p>
-            </div>
-            </div>
-
-        <div class="card shadow-sm border-0 mt-3">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle" id="table-log">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col" class="py-3">Tanggal</th>
-                                <th scope="col" class="py-3">Keterangan</th>
-                                <th scope="col" class="py-3">Kategori</th>
-                                <th scope="col" class="py-3 text-end">Nominal</th>
-                                <th scope="col" class="py-3 text-center">Arus</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <!-- Table Card -->
+    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left" id="table-log">
+                <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                    <tr>
+                        <th class="px-6 py-4 rounded-l-xl">Tanggal</th>
+                        <th class="px-6 py-4">Keterangan</th>
+                        <th class="px-6 py-4">Kategori</th>
+                        <th class="px-6 py-4 text-right">Nominal</th>
+                        <th class="px-6 py-4 text-center rounded-r-xl">Arus</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    <!-- DataTables magic -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -51,7 +36,7 @@
 <script>
     var baseUrl = '<?= base_url("transaction") ?>';
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#table-log').DataTable({
             serverSide: true,
             processing: true,
@@ -60,88 +45,81 @@
             ajax: {
                 url: `${baseUrl}/list`,
                 type: 'GET',
-                data: function (d) {
+                data: function(d) {
                     d.mode = 'all';
                 },
-                dataSrc: function (json) {
+                dataSrc: function(json) {
                     return json.data || [];
                 }
             },
-            columns: [
-                { 
+            columns: [{
                     data: 'tanggal',
+                    className: 'px-6 py-4',
                     render: function(data) {
                         let date = new Date(data);
-                        return `<span class="fw-medium">${date.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})}</span>`;
+                        return `<span class="text-xs font-bold text-gray-500 uppercase">${date.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})}</span>`;
                     }
                 },
-                { 
+                {
                     data: 'nama_transaksi',
+                    className: 'px-6 py-4',
                     render: function(data) {
-                        return `<span class="fw-bold text-dark">${data}</span>`;
+                        return `<span class="font-bold text-gray-900">${data}</span>`;
                     }
                 },
                 {
                     data: 'kategori',
-                    render: function (data, type, row) {
+                    className: 'px-6 py-4',
+                    render: function(data, type, row) {
                         let label = data;
-                        let badgeClass = 'bg-light text-dark border';
+                        let badgeClass = 'bg-gray-100 text-gray-600 border-gray-200';
 
                         if (data === 'Hutang/Piutang') {
                             let desc = row.nama_transaksi.toLowerCase();
-
                             if (desc.includes('pinjaman dari')) {
                                 label = 'Hutang';
-                                badgeClass = 'bg-danger-subtle text-danger border border-danger-subtle';
-                            }
-                            else if (desc.includes('meminjamkan ke')) {
+                                badgeClass = 'bg-red-50 text-red-600 border-red-100';
+                            } else if (desc.includes('meminjamkan ke')) {
                                 label = 'Piutang';
-                                badgeClass = 'bg-info-subtle text-info border border-info-subtle';
-                            }
-                            else if (desc.includes('pelunasan hutang')) {
+                                badgeClass = 'bg-blue-50 text-blue-600 border-blue-100';
+                            } else if (desc.includes('pelunasan hutang')) {
                                 label = 'Bayar Hutang';
-                                badgeClass = 'bg-success-subtle text-success border border-success-subtle';
-                            }
-                            else if (desc.includes('pelunasan piutang')) {
+                                badgeClass = 'bg-green-50 text-green-600 border-green-100';
+                            } else if (desc.includes('pelunasan piutang')) {
                                 label = 'Terima Piutang';
-                                badgeClass = 'bg-primary-subtle text-primary border border-primary-subtle'; 
-                            }
-                            else {
+                                badgeClass = 'bg-primary/10 text-black border-primary/20';
+                            } else {
                                 label = 'Hutang/Piutang';
-                                badgeClass = 'bg-warning-subtle text-warning-emphasis border border-warning-subtle';
+                                badgeClass = 'bg-yellow-50 text-yellow-700 border-yellow-100';
                             }
-                        }
-                        else {
-                            badgeClass = 'bg-light text-secondary border';
                         }
 
-                        return `<span class="badge rounded-pill fw-medium px-3 py-2 ${badgeClass}">
+                        return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${badgeClass}">
                                     ${label}
                                 </span>`;
                     }
                 },
                 {
                     data: 'harga',
-                    className: 'text-end',
-                    render: function (data, type, row) {
-                        let color = row.type === 'income' ? 'text-success' : 'text-danger';
+                    className: 'px-6 py-4 text-right font-black',
+                    render: function(data, type, row) {
+                        let color = row.type === 'income' ? 'text-green-600' : 'text-red-600';
                         let prefix = row.type === 'income' ? '+' : '-';
-                        return `<span class="amount-text fs-6 ${color}">
+                        return `<span class="${color}">
                                     ${prefix} Rp ${parseFloat(data || 0).toLocaleString('id-ID')}
                                 </span>`;
                     }
                 },
                 {
                     data: 'type',
-                    className: 'text-center',
+                    className: 'px-6 py-4 text-center',
                     render: function(data) {
-                        return data === 'income' 
-                            ? '<i class="bi bi-arrow-down-circle-fill text-success fs-5" title="Masuk"></i>' 
-                            : '<i class="bi bi-arrow-up-circle-fill text-danger fs-5" title="Keluar"></i>';
+                        return data === 'income' ?
+                            '<i data-lucide="arrow-down-circle" class="text-green-500 w-5 h-5" title="Masuk"></i>' :
+                            '<i data-lucide="arrow-up-circle" class="text-red-500 w-5 h-5" title="Keluar"></i>';
                     }
                 }
             ],
-            language: { emptyTable: "Belum ada riwayat transaksi" },
             pageLength: 10
         });
     });

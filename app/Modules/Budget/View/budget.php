@@ -1,147 +1,133 @@
 <?= $this->extend('../Modules/Dashboard/View/layouts/dashboardLayouts') ?>
 
 <?= $this->section('content') ?>
-<div class="container mt-4">
-    <div class="">
-        <h1 class="fw-bold">Budget Limitator</h1>
-        <div class="page-header">
-            <div class="page-header-text">
-                <p class="mb-0">Atur batas maksimal pengeluaran per kategori setiap bulan</p>
-            </div>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div>
+            <h1 class="text-2xl font-black text-gray-900 mb-1">Budget Limitator</h1>
+            <p class="text-xs text-gray-500 font-medium">Atur batas maksimal pengeluaran per kategori setiap bulan.</p>
+        </div>
+        <div class="w-full md:w-auto">
+            <button type="button" id="btn-tambah" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-primary hover:bg-yellow-400 text-black font-bold rounded-2xl shadow-sm hover:shadow-md transition-all border-2 border-primary/20 hover:border-primary">
+                <i data-lucide="plus" class="mr-2 w-5 h-5"></i> Tambah Budget
+            </button>
+        </div>
+    </div>
 
-            <div class="page-header-actions">
-                <button id="btn-tambah" class="btn px-4 rounded-5 shadow-sm"
-                    style="background-color: #FFD600; color: #000000; border: none;">
-                    <i class="bi bi-plus-lg"></i> Tambah Budget
+    <!-- Filter & Table Card -->
+    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100">
+        <!-- Filter Section -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6 items-end">
+             <div class="w-full md:w-1/3">
+                <label for="filter-month" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Bulan</label>
+                <select id="filter-month" class="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-primary transition-all">
+                    <?php
+                    $months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                    foreach ($months as $idx => $m):
+                    ?>
+                        <option value="<?= $idx + 1 ?>" <?= $currentMonth == ($idx + 1) ? 'selected' : '' ?>><?= $m ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+             <div class="w-full md:w-1/3">
+                <label for="filter-year" class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Tahun</label>
+                <input type="number" id="filter-year" value="<?= $currentYear ?>" min="2000" max="2100" class="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-primary transition-all">
+            </div>
+             <div class="w-full md:w-auto">
+                <button id="btn-filter" class="w-full md:w-auto px-6 py-3 bg-gray-900 text-white font-bold rounded-xl shadow-lg shadow-gray-200 hover:shadow-xl hover:scale-105 transition-all">
+                    <i data-lucide="filter" class="mr-2 w-4 h-4"></i> Filter
                 </button>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <!-- Filter Section -->
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <label for="filter-month" class="form-label">Bulan</label>
-                        <select class="form-select" id="filter-month">
-                            <option value="1" <?= $currentMonth == 1 ? 'selected' : '' ?>>Januari</option>
-                            <option value="2" <?= $currentMonth == 2 ? 'selected' : '' ?>>Februari</option>
-                            <option value="3" <?= $currentMonth == 3 ? 'selected' : '' ?>>Maret</option>
-                            <option value="4" <?= $currentMonth == 4 ? 'selected' : '' ?>>April</option>
-                            <option value="5" <?= $currentMonth == 5 ? 'selected' : '' ?>>Mei</option>
-                            <option value="6" <?= $currentMonth == 6 ? 'selected' : '' ?>>Juni</option>
-                            <option value="7" <?= $currentMonth == 7 ? 'selected' : '' ?>>Juli</option>
-                            <option value="8" <?= $currentMonth == 8 ? 'selected' : '' ?>>Agustus</option>
-                            <option value="9" <?= $currentMonth == 9 ? 'selected' : '' ?>>September</option>
-                            <option value="10" <?= $currentMonth == 10 ? 'selected' : '' ?>>Oktober</option>
-                            <option value="11" <?= $currentMonth == 11 ? 'selected' : '' ?>>November</option>
-                            <option value="12" <?= $currentMonth == 12 ? 'selected' : '' ?>>Desember</option>
+        <!-- Table -->
+        <div class="overflow-hidden rounded-2xl border border-gray-100">
+             <table class="w-full text-sm text-left" id="table-budget">
+                <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                    <tr>
+                         <th class="px-6 py-4 rounded-l-xl">#</th>
+                        <th class="px-6 py-4">Kategori</th>
+                        <th class="px-6 py-4 text-right">Limit Budget</th>
+                        <th class="px-6 py-4 text-right rounded-r-xl">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    <!-- DataTables magic -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Form Budget -->
+<div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden border-0 shadow-2xl rounded-3xl">
+            <div class="p-6 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-extrabold text-gray-900" id="budgetModalLabel">Budget Limitator</h1>
+                    <p class="text-xs text-gray-400">Atur batas maksimal pengeluaran</p>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-gray-600 transition-colors" data-bs-dismiss="modal">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form id="form_budget">
+                <div class="p-8 space-y-4">
+                    <input type="hidden" name="id_budget" id="id_budget" value="" />
+
+                    <div>
+                        <label for="category" class="block text-sm font-bold text-gray-700 mb-1">Kategori<span class="text-red-500 ml-1">*</span></label>
+                        <select name="category" id="category" required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all cursor-pointer">
+                            <option value="" selected disabled>Pilih Kategori</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Transportasi">Transportasi</option>
+                            <option value="Hiburan">Hiburan</option>
+                            <option value="Belanja">Belanja</option>
+                            <option value="Kesehatan">Kesehatan</option>
+                            <option value="Pendidikan">Pendidikan</option>
+                            <option value="Tagihan">Tagihan</option>
+                            <option value="Lainnya">Lainnya</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label for="filter-year" class="form-label">Tahun</label>
-                        <input type="number" class="form-control" id="filter-year" value="<?= $currentYear ?>" min="2000" max="2100">
+
+                    <div>
+                        <label for="amount" class="block text-sm font-bold text-gray-700 mb-1">Limit Budget (Rp)<span class="text-red-500 ml-1">*</span></label>
+                        <input type="number" name="amount" id="amount" required placeholder="0" min="0" step="0.01"
+                            class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
+                        <p class="mt-1 text-[10px] text-gray-400 uppercase font-black italic">Transaksi yang melebihi limit ini akan memunculkan peringatan</p>
                     </div>
-                    <div class="col-md-3 d-flex align-items-end">
-                        <button id="btn-filter" class="btn btn-primary">
-                            <i class="bi bi-funnel"></i> Filter
-                        </button>
-                    </div>
-                </div>
 
-                <!-- Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover" id="table-budget">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col" class="py-3">#</th>
-                                <th scope="col" class="py-3">Kategori</th>
-                                <th scope="col" class="py-3">Limit Budget</th>
-                                <th scope="col" class="py-3 text-end">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Modal Form Budget -->
-                <form id="form_budget">
-                    <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content border-0 shadow-lg rounded-4">
-                                <div class="modal-header border-0 bg-light rounded-top-4">
-                                    <div>
-                                        <h1 class="modal-title fs-5 fw-bold mb-1" id="budgetModalLabel">Form Budget Limitator</h1>
-                                        <small class="text-muted">Atur batas maksimal pengeluaran</small>
-                                    </div>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body p-4">
-                                    <input type="hidden" name="id_budget" id="id_budget" value="" />
-                                    
-                                    <div class="mb-3">
-                                        <label for="category" class="form-label">Kategori<sup
-                                                class="text-danger">*</sup></label>
-                                        <select class="form-select" id="category" name="category" required>
-                                            <option value="" selected disabled>Pilih Kategori</option>
-                                            <option value="Makanan">Makanan</option>
-                                            <option value="Transportasi">Transportasi</option>
-                                            <option value="Hiburan">Hiburan</option>
-                                            <option value="Belanja">Belanja</option>
-                                            <option value="Kesehatan">Kesehatan</option>
-                                            <option value="Pendidikan">Pendidikan</option>
-                                            <option value="Tagihan">Tagihan</option>
-                                            <option value="Lainnya">Lainnya</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="amount" class="form-label">Limit Budget (Maksimal Pengeluaran)<sup
-                                                class="text-danger">*</sup></label>
-                                        <input type="number" class="form-control" id="amount" name="amount"
-                                            placeholder="0" required min="0" step="0.01" />
-                                        <small class="text-muted">Transaksi yang melebihi limit ini akan ditolak</small>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="month" class="form-label">Bulan<sup
-                                                class="text-danger">*</sup></label>
-                                        <select class="form-select" id="month" name="month" required>
-                                            <option value="1">Januari</option>
-                                            <option value="2">Februari</option>
-                                            <option value="3">Maret</option>
-                                            <option value="4">April</option>
-                                            <option value="5">Mei</option>
-                                            <option value="6">Juni</option>
-                                            <option value="7">Juli</option>
-                                            <option value="8">Agustus</option>
-                                            <option value="9">September</option>
-                                            <option value="10">Oktober</option>
-                                            <option value="11">November</option>
-                                            <option value="12">Desember</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="year" class="form-label">Tahun<sup
-                                                class="text-danger">*</sup></label>
-                                        <input type="number" class="form-control" id="year" name="year"
-                                            value="<?= $currentYear ?>" required min="2000" max="2100" />
-                                    </div>
-                                </div>
-                                <div class="modal-footer border-0 bg-light rounded-bottom-4">
-                                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4"
-                                        data-bs-dismiss="modal">Batal</button>
-                                    <button type="submit" class="btn btn-warning rounded-pill px-4">Simpan</button>
-                                </div>
-                            </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="month" class="block text-sm font-bold text-gray-700 mb-1">Bulan<span class="text-red-500 ml-1">*</span></label>
+                            <select name="month" id="month" required
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all cursor-pointer">
+                                <?php foreach ($months as $idx => $m): ?>
+                                    <option value="<?= $idx + 1 ?>"><?= $m ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="year" class="block text-sm font-bold text-gray-700 mb-1">Tahun<span class="text-red-500 ml-1">*</span></label>
+                            <input type="number" name="year" id="year" value="<?= $currentYear ?>" required min="2000" max="2100"
+                                class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all">
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                    <button type="button" class="px-6 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-full transition-colors" data-bs-dismiss="modal">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-8 py-2 bg-primary hover:bg-yellow-400 text-black font-bold rounded-full shadow-sm hover:shadow-md transition-all">
+                        Simpan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -151,17 +137,8 @@
 <script>
     var baseUrl = '<?= base_url("budget") ?>';
     var table;
-    var currentMonth = <?= $currentMonth ?>;
-    var currentYear = <?= $currentYear ?>;
 
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $(document).ready(function () {
-        // Initialize DataTable
+    $(document).ready(function() {
         table = $('#table-budget').DataTable({
             serverSide: true,
             processing: true,
@@ -173,26 +150,30 @@
                     d.month = $('#filter-month').val();
                     d.year = $('#filter-year').val();
                 },
-                dataSrc: function (json) {
+                dataSrc: function(json) {
                     return json.data || [];
                 }
             },
-            order: [[1, 'asc']],
-            columns: [
-                {
+            order: [
+                [1, 'asc']
+            ],
+            columns: [{
                     data: null,
                     orderable: false,
                     searchable: false,
-                    className: 'text-center',
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
+                    className: 'px-6 py-4 text-center',
+                    render: function(data, type, row, meta) {
+                        return `<span class="text-gray-400">${meta.row + meta.settings._iDisplayStart + 1}</span>`;
                     }
                 },
-                { data: 'category' },
+                {
+                    data: 'category',
+                    className: 'px-6 py-4 font-bold text-gray-900'
+                },
                 {
                     data: 'amount',
-                    className: 'text-end',
-                    render: function (data) {
+                    className: 'px-6 py-4 text-right font-black text-gray-900',
+                    render: function(data) {
                         return 'Rp ' + data;
                     }
                 },
@@ -200,100 +181,85 @@
                     data: null,
                     orderable: false,
                     searchable: false,
-                    className: 'text-end',
-                    render: function (data) {
+                    className: 'px-6 py-4 text-right',
+                    render: function(data) {
                         return `
-                            <button class="btn badge rounded-pill bg-warning-subtle text-warning-emphasis border-0 me-1 px-3 py-2 btn-edit" data-id="${data.id}">
-                                <i class="bi bi-pencil-square me-1"></i> Edit
-                            </button>
-                            <button class="btn badge rounded-pill bg-danger-subtle text-danger border-0 px-3 py-2 btn-delete" data-id="${data.id}">
-                                <i class="bi bi-trash me-1"></i> Hapus
-                            </button>
+                            <div class="flex justify-end gap-2">
+                                <button class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors btn-edit" data-id="${data.id}" title="Edit">
+                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                </button>
+                                <button class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors btn-delete" data-id="${data.id}" title="Hapus">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
                         `;
                     }
                 }
             ],
-            language: { emptyTable: "Tidak ada budget yang diatur" },
             pageLength: 10
         });
 
-        // Filter Button
         $('#btn-filter').click(function() {
             table.ajax.reload();
         });
 
-        // Add Button
-        $('#btn-tambah').click(function () {
+        $('#btn-tambah').click(function() {
             $('#form_budget')[0].reset();
             $('#id_budget').val('');
             $('#month').val($('#filter-month').val());
             $('#year').val($('#filter-year').val());
+            $('#budgetModalLabel').text('Tambah Budget');
             $('#budgetModal').modal('show');
         });
 
-        // Form Submit
-        $('#form_budget').submit(function (e) {
+        $('#form_budget').submit(function(e) {
             e.preventDefault();
             let id = $('#id_budget').val();
             let url = id ? `${baseUrl}/update/${id}` : `${baseUrl}/create`;
-            let formData = {
-                category: $('#category').val(),
-                amount: $('#amount').val(),
-                month: $('#month').val(),
-                year: $('#year').val()
-            };
+            let formData = $(this).serialize();
 
             $.ajax({
                 url: url,
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
-                success: function (res) {
-                    $('#budgetModal').modal('hide');
+                success: function(res) {
                     if (res.status) {
-                        Swal.fire('Berhasil', res.message, 'success');
+                        $('#budgetModal').modal('hide');
+                        showAlert('success', 'Berhasil', res.message);
                         table.ajax.reload(null, false);
                     } else {
-                        let errorMsg = res.message;
-                        if (res.errors) {
-                            errorMsg = Object.values(res.errors).join('<br>');
-                        }
-                        Swal.fire('Gagal', errorMsg, 'error');
+                        showAlert('error', 'Gagal', res.message || 'Gagal');
                     }
                 },
-                error: function () {
-                    Swal.fire('Error', 'Terjadi kesalahan sistem', 'error');
+                error: function() {
+                    showAlert('error', 'Error', 'Terjadi kesalahan sistem');
                 }
             });
         });
 
-        // Edit Button
-        $(document).on('click', '.btn-edit', function () {
+        $(document).on('click', '.btn-edit', function() {
             let row = table.row($(this).closest('tr')).data();
-            
             $('#form_budget')[0].reset();
             $('#id_budget').val(row.id);
             $('#category').val(row.category);
-            
-            // Remove "Rp " and dots from the formatted number
             let amount = row.amount.replace(/[^\d]/g, '');
             $('#amount').val(amount);
-            
             $('#month').val(row.month);
             $('#year').val(row.year);
+            $('#budgetModalLabel').text('Edit Budget');
             $('#budgetModal').modal('show');
         });
 
-        // Delete Button
-        $(document).on('click', '.btn-delete', function () {
+        $(document).on('click', '.btn-delete', function() {
             let id = $(this).data('id');
             Swal.fire({
                 title: 'Apakah Anda yakin?',
                 text: 'Budget limitator ini akan dihapus!',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
@@ -302,16 +268,16 @@
                         url: `${baseUrl}/delete/${id}`,
                         type: 'POST',
                         dataType: 'json',
-                        success: function (response) {
+                        success: function(response) {
                             if (response.status) {
-                                Swal.fire('Berhasil', response.message, 'success');
+                                showAlert('success', 'Berhasil', response.message);
                                 table.ajax.reload(null, false);
                             } else {
-                                Swal.fire('Gagal', response.message, 'error');
+                                showAlert('error', 'Gagal', response.message);
                             }
                         },
-                        error: function () {
-                            Swal.fire('Error', 'Terjadi kesalahan saat menghapus.', 'error');
+                        error: function() {
+                            showAlert('error', 'Error', 'Terjadi kesalahan saat menghapus.');
                         }
                     });
                 }
