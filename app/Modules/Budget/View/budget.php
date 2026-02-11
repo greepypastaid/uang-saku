@@ -3,15 +3,40 @@
 <?= $this->section('content') ?>
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         <div>
-            <h1 class="text-2xl font-black text-gray-900 mb-1">Budget Limitator</h1>
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Budget Limitator</h1>
             <p class="text-xs text-gray-500 font-medium">Atur batas maksimal pengeluaran per kategori setiap bulan.</p>
         </div>
         <div class="w-full md:w-auto">
-            <button type="button" id="btn-tambah" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-primary hover:bg-yellow-400 text-black font-bold rounded-2xl shadow-sm hover:shadow-md transition-all border-2 border-primary/20 hover:border-primary">
+            <button type="button" id="btn-tambah" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-gradient-to-r from-[#2d5a3f] to-[#3b7a57] hover:from-[#1a3a2a] hover:to-[#2d5a3f] text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 hover:shadow-xl transition-all">
                 <i data-lucide="plus" class="mr-2 w-5 h-5"></i> Tambah Budget
             </button>
+        </div>
+    </div>
+
+    <!-- Budget Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full">Active</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Budget Aktif</p>
+            <h3 class="text-xl font-extrabold text-gray-900 mt-1" id="budget-count">-</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="banknote" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">Limit</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Limit Bulan Ini</p>
+            <h3 class="text-xl font-extrabold text-emerald-600 mt-1" id="budget-total-limit">Rp 0</h3>
         </div>
     </div>
 
@@ -139,6 +164,18 @@
     var table;
 
     $(document).ready(function() {
+        // Fetch budget stats
+        const fmtCurrency = (v) => 'Rp ' + parseFloat(v || 0).toLocaleString('id-ID');
+        const m = $('#filter-month').val();
+        const y = $('#filter-year').val();
+        fetch(`${baseUrl}/list?start=0&length=100&month=${m}&year=${y}`).then(r => r.json()).then(d => {
+            const budgets = d.data || [];
+            document.getElementById('budget-count').innerText = budgets.length + ' Budget';
+            let total = 0;
+            budgets.forEach(b => { total += parseFloat(String(b.amount).replace(/[^0-9]/g,'') || 0); });
+            document.getElementById('budget-total-limit').innerText = fmtCurrency(total);
+        }).catch(() => {});
+
         table = $('#table-budget').DataTable({
             serverSide: true,
             processing: true,

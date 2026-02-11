@@ -3,15 +3,40 @@
 <?= $this->section('content') ?>
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         <div>
-            <h1 class="text-2xl font-black text-gray-900 mb-1">Log Mutasi Rekening</h1>
-            <p class="text-xs text-gray-500 font-medium">Riwayat lengkap semua aliran dana masuk and keluar.</p>
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Log Mutasi Rekening</h1>
+            <p class="text-xs text-gray-500 font-medium">Riwayat lengkap semua aliran dana masuk dan keluar.</p>
+        </div>
+    </div>
+
+    <!-- Flow Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="arrow-down-circle" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">↑ Masuk</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Dana Masuk</p>
+            <h3 class="text-xl font-extrabold text-emerald-600 mt-1" id="log-income">Rp 0</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                    <i data-lucide="arrow-up-circle" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">↓ Keluar</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Dana Keluar</p>
+            <h3 class="text-xl font-extrabold text-red-500 mt-1" id="log-expense">Rp 0</h3>
         </div>
     </div>
 
     <!-- Table Card -->
-    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left" id="table-log">
                 <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
@@ -37,6 +62,13 @@
     var baseUrl = '<?= base_url("transaction") ?>';
 
     $(document).ready(function() {
+        // Fetch flow stats
+        const fmtCurrency = (v) => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(v);
+        fetch('<?= base_url("dashboard/get_data") ?>').then(r => r.json()).then(d => {
+            document.getElementById('log-income').innerText = fmtCurrency(d.total_pemasukan);
+            document.getElementById('log-expense').innerText = fmtCurrency(d.total_pengeluaran);
+        }).catch(() => {});
+
         $('#table-log').DataTable({
             serverSide: true,
             processing: true,

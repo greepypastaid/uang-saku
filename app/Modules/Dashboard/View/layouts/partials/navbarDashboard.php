@@ -66,6 +66,24 @@ $currentPath = preg_replace('#^/index\.php#', '', $request->getUri()->getPath())
         </div>
         <span class="text-sm">Hutang</span>
     </a>
+
+    <p class="px-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-6 mb-2">Fitur</p>
+
+    <a href="<?= base_url('/saving-goals') ?>" 
+       class="flex items-center px-4 py-2 rounded-2xl transition-all duration-300 group <?= $currentPath === '/saving-goals' ? 'bg-primary text-black font-bold shadow-lg shadow-yellow-200' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' ?>">
+        <div class="mr-3.5 <?= $currentPath === '/saving-goals' ? 'text-black' : 'text-gray-400 group-hover:text-yellow-500 transition-colors' ?>">
+            <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+        </div>
+        <span class="text-sm">Saving Goals</span>
+    </a>
+
+    <a href="<?= base_url('/wishlist') ?>" 
+       class="flex items-center px-4 py-2 rounded-2xl transition-all duration-300 group <?= $currentPath === '/wishlist' ? 'bg-primary text-black font-bold shadow-lg shadow-yellow-200' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900' ?>">
+        <div class="mr-3.5 <?= $currentPath === '/wishlist' ? 'text-black' : 'text-gray-400 group-hover:text-yellow-500 transition-colors' ?>">
+            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+        </div>
+        <span class="text-sm">Wishlist</span>
+    </a>
 </nav>
 
 <!-- Logout Section -->

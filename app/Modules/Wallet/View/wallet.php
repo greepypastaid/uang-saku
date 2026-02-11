@@ -3,23 +3,51 @@
 <?= $this->section('content') ?>
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         <div>
-            <h1 class="text-2xl font-black text-gray-900 mb-1">Halaman Wallet</h1>
-            <p class="text-xs text-gray-500 font-medium">Kelola saldo and transfer antar wallet Anda.</p>
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Halaman Wallet</h1>
+            <p class="text-xs text-gray-500 font-medium">Kelola saldo dan transfer antar wallet Anda.</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <button id="btn-transfer" class="inline-flex items-center justify-center px-6 py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-2xl shadow-sm hover:shadow-md transition-all">
                 <i data-lucide="repeat" class="mr-2 w-4 h-4"></i> Transfer Dana
             </button>
-            <button id="btn-tambah" class="inline-flex items-center justify-center px-6 py-3 bg-primary hover:bg-yellow-400 text-black font-bold rounded-2xl shadow-sm hover:shadow-md transition-all border-2 border-primary/20 hover:border-primary">
+            <button id="btn-tambah" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#2d5a3f] to-[#3b7a57] hover:from-[#1a3a2a] hover:to-[#2d5a3f] text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 hover:shadow-xl transition-all">
                 <i data-lucide="plus" class="mr-2 w-5 h-5"></i> Tambah Wallet
             </button>
         </div>
     </div>
 
+    <!-- Total Saldo Card -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2 relative overflow-hidden bg-gradient-to-r from-[#1a3a2a] to-[#2d5a3f] p-7 rounded-2xl text-white shadow-xl">
+            <div class="absolute -top-6 -right-6 w-28 h-28 bg-white/5 rounded-full blur-2xl"></div>
+            <div class="absolute bottom-4 left-10 w-20 h-20 bg-emerald-400/10 rounded-full blur-xl"></div>
+            <div class="relative z-10">
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-300"></i>
+                    </div>
+                    <span class="text-emerald-300/70 text-xs font-semibold uppercase tracking-wider">Total Saldo Semua Wallet</span>
+                </div>
+                <h2 class="text-3xl font-extrabold mt-3" id="wallet-total-saldo">Rp 0</h2>
+                <p class="text-emerald-200/50 text-xs mt-2 font-medium">Gabungan saldo seluruh wallet</p>
+            </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col justify-center">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="credit-card" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-full">Active</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Wallet</p>
+            <h3 class="text-xl font-extrabold text-gray-900 mt-1" id="wallet-count">-</h3>
+        </div>
+    </div>
+
     <!-- Table Card -->
-    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left" id="tabel-wallet">
                 <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
@@ -140,6 +168,15 @@
     var table;
 
     $(document).ready(function() {
+        // Fetch wallet stats
+        const fmtCurrency = (v) => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(v);
+        fetch('<?= base_url("dashboard/get_data") ?>').then(r => r.json()).then(d => {
+            document.getElementById('wallet-total-saldo').innerText = fmtCurrency(d.total_saldo);
+        }).catch(() => {});
+        fetch('<?= base_url("wallet/list") ?>?start=0&length=100').then(r => r.json()).then(d => {
+            document.getElementById('wallet-count').innerText = (d.data ? d.data.length : 0) + ' Wallet';
+        }).catch(() => {});
+
         table = $('#tabel-wallet').DataTable({
             serverSide: true,
             processing: true,

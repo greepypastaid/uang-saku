@@ -3,20 +3,56 @@
 <?= $this->section('content') ?>
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         <div>
-            <h1 class="text-2xl font-black text-gray-900 mb-1">Hutang & Piutang</h1>
-            <p class="text-xs text-gray-500 font-medium">Bayar Hutangmu and tagihlah hakmu tepat waktu!</p>
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Hutang & Piutang</h1>
+            <p class="text-xs text-gray-500 font-medium">Bayar Hutangmu dan tagihlah hakmu tepat waktu!</p>
         </div>
         <div class="w-full md:w-auto">
-            <button onclick="openCreateModal()" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-primary hover:bg-yellow-400 text-black font-bold rounded-2xl shadow-sm hover:shadow-md transition-all border-2 border-primary/20 hover:border-primary">
+            <button onclick="openCreateModal()" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-gradient-to-r from-[#2d5a3f] to-[#3b7a57] hover:from-[#1a3a2a] hover:to-[#2d5a3f] text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 hover:shadow-xl transition-all">
                 <i data-lucide="plus" class="mr-2 w-5 h-5"></i> Catat Baru
             </button>
         </div>
     </div>
 
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                    <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">Hutang</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Hutang</p>
+            <h3 class="text-xl font-extrabold text-red-500 mt-1" id="hp-hutang">Rp 0</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">Piutang</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Piutang</p>
+            <h3 class="text-xl font-extrabold text-emerald-600 mt-1" id="hp-piutang">Rp 0</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">Paid</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Sudah Lunas</p>
+            <h3 class="text-xl font-extrabold text-blue-600 mt-1" id="hp-lunas">0</h3>
+        </div>
+    </div>
+
     <!-- Table Card -->
-    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left" id="table-HutangPiutang">
                 <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
@@ -208,6 +244,21 @@
     var table;
 
     $(document).ready(function() {
+        // Fetch HP stats
+        fetch(`${baseUrl}/list?start=0&length=1000`).then(r => r.json()).then(d => {
+            const items = d.data || [];
+            let hutang = 0, piutang = 0, lunas = 0;
+            items.forEach(i => {
+                const amt = parseFloat(i.amount || 0);
+                if (i.type === 'hutang') hutang += (i.status !== 'paid' ? amt : 0);
+                if (i.type === 'piutang') piutang += (i.status !== 'paid' ? amt : 0);
+                if (i.status === 'paid') lunas++;
+            });
+            document.getElementById('hp-hutang').innerText = 'Rp ' + hutang.toLocaleString('id-ID');
+            document.getElementById('hp-piutang').innerText = 'Rp ' + piutang.toLocaleString('id-ID');
+            document.getElementById('hp-lunas').innerText = lunas + ' Transaksi';
+        }).catch(() => {});
+
         table = $('#table-HutangPiutang').DataTable({
             serverSide: true,
             processing: true,

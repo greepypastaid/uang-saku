@@ -3,20 +3,56 @@
 <?= $this->section('content') ?>
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         <div>
-            <h1 class="text-2xl font-black text-gray-900 mb-1">Daftar Transaksi</h1>
-            <p class="text-xs text-gray-500 font-medium">Kelola rincian pengeluaran and pemasukan Anda.</p>
+            <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Daftar Transaksi</h1>
+            <p class="text-xs text-gray-500 font-medium">Kelola rincian pengeluaran dan pemasukan Anda.</p>
         </div>
         <div class="w-full md:w-auto">
-            <button type="button" id="btn-tambah" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-primary hover:bg-yellow-400 text-black font-bold rounded-2xl shadow-sm hover:shadow-md transition-all border-2 border-primary/20 hover:border-primary">
+            <button type="button" id="btn-tambah" class="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-gradient-to-r from-[#2d5a3f] to-[#3b7a57] hover:from-[#1a3a2a] hover:to-[#2d5a3f] text-white font-bold rounded-2xl shadow-lg shadow-emerald-200 hover:shadow-xl transition-all">
                 <i data-lucide="plus" class="mr-2 w-5 h-5"></i> Tambah Transaksi
             </button>
         </div>
     </div>
 
+    <!-- Summary Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">All</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Transaksi</p>
+            <h3 class="text-xl font-extrabold text-gray-900 mt-1" id="stat-total-trx">-</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full">↑ Income</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Pemasukan</p>
+            <h3 class="text-xl font-extrabold text-emerald-600 mt-1" id="stat-income">Rp 0</h3>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-3">
+                <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform">
+                    <i data-lucide="trending-down" class="w-5 h-5"></i>
+                </div>
+                <span class="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">↓ Expense</span>
+            </div>
+            <p class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Total Pengeluaran</p>
+            <h3 class="text-xl font-extrabold text-red-500 mt-1" id="stat-expense">Rp 0</h3>
+        </div>
+    </div>
+
     <!-- Table Card -->
-    <div class="bg-white rounded-[2.5rem] p-6 shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left" id="table-transaksi">
                 <thead class="bg-gray-50/50 text-gray-400 text-[10px] font-black uppercase tracking-widest">
@@ -140,6 +176,16 @@
     var table;
 
     $(document).ready(function() {
+        // Fetch stats
+        const fmtCurrency = (v) => new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(v);
+        fetch('<?= base_url("dashboard/get_data") ?>').then(r => r.json()).then(d => {
+            document.getElementById('stat-income').innerText = fmtCurrency(d.total_pemasukan);
+            document.getElementById('stat-expense').innerText = fmtCurrency(d.total_pengeluaran);
+        }).catch(() => {});
+        fetch('<?= base_url("transaction/list") ?>?length=1&start=0').then(r => r.json()).then(d => {
+            document.getElementById('stat-total-trx').innerText = (d.recordsTotal || 0).toLocaleString('id-ID') + ' Transaksi';
+        }).catch(() => {});
+
         table = $('#table-transaksi').DataTable({
             serverSide: true,
             processing: true,

@@ -7,6 +7,11 @@
     <link rel="icon" href="<?= base_url('img/UangSakuLogo.png') ?>" type="image/x-icon">
     <title>Dashboard - Uang Saku</title>
 
+    <!-- Google Font Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -125,7 +130,7 @@
     <?= csrf_meta() ?>
 </head>
 
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-[#f0f5f0] min-h-screen" style="font-family: 'Inter', sans-serif;">
     <?php
     $request = service('request');
     $currentPath = preg_replace('#^/index\.php#', '', $request->getUri()->getPath());
